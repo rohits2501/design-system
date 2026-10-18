@@ -31,13 +31,13 @@
     border-color 0.12s ease;
 }
 .h-button--sm {
-  min-height: 28px;
+  min-height: var(--control-height-sm);
   padding: 0 var(--space-2);
   font-size: var(--font-size-xs);
   line-height: var(--line-height-xs);
 }
 .h-button--md {
-  min-height: 36px;
+  min-height: var(--control-height-md);
   padding: 0 var(--space-4);
   font-size: var(--font-size-sm);
   line-height: var(--line-height-sm);
@@ -71,11 +71,11 @@
 }
 
 .h-icon-button.h-button--sm {
-  width: 28px;
+  width: var(--control-height-sm);
   padding: 0;
 }
 .h-icon-button.h-button--md {
-  width: 36px;
+  width: var(--control-height-md);
   padding: 0;
 }
 .h-icon {
@@ -120,6 +120,11 @@
 .h-text--2xl {
   font-size: var(--font-size-2xl);
   line-height: var(--line-height-2xl);
+}
+.h-text--xl,
+.h-text--2xl {
+  font-family: var(--font-display);
+  letter-spacing: var(--tracking-display);
 }
 .h-text--default {
   color: var(--text);
@@ -266,14 +271,23 @@
   border-radius: var(--radius-md);
   color: var(--text);
 }
+.h-surface--default,
+.h-surface--raised {
+  -webkit-backdrop-filter: var(--surface-backdrop);
+  backdrop-filter: var(--surface-backdrop);
+}
 .h-surface--default {
-  background: var(--surface);
+  background: color-mix(in srgb, var(--surface) calc(var(--surface-alpha) * 100%), transparent);
 }
 .h-surface--subtle {
   background: var(--bg-subtle);
 }
 .h-surface--raised {
-  background: var(--surface-raised);
+  background: color-mix(
+    in srgb,
+    var(--surface-raised) calc(var(--surface-alpha) * 100%),
+    transparent
+  );
   box-shadow:
     0 1px 2px color-mix(in srgb, var(--text) 8%, transparent),
     0 8px 24px color-mix(in srgb, var(--text) 10%, transparent);
@@ -336,7 +350,7 @@
   color: var(--text);
 }
 .h-input {
-  min-height: 36px;
+  min-height: var(--control-height-md);
   padding: 0 var(--space-3);
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);

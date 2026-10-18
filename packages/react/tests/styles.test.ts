@@ -22,6 +22,21 @@ test("every space step has a gap and a padding class", () => {
   }
 });
 
+test("presets reach components only through variables", () => {
+  expect(styles).not.toContain("data-preset");
+  expect(styles).not.toMatch(/min-height: \d|width: \d+px;\s*padding: 0/);
+  for (const m of styles.matchAll(/backdrop-filter: ([^;]+);/g))
+    expect(m[1]).toBe("var(--surface-backdrop)");
+  expect(styles).toMatch(
+    /\.h-text--xl,\s*\.h-text--2xl\s*\{\s*font-family: var\(--font-display\);\s*letter-spacing: var\(--tracking-display\);/,
+  );
+});
+
+test("house surfaces stay solid with no backdrop", () => {
+  expect(theme).toContain("--surface-alpha: 1;");
+  expect(theme).toContain("--surface-backdrop: none;");
+});
+
 test("interactive primitives draw the shared focus ring", () => {
   expect(styles).toMatch(
     /\.h-button:focus-visible,\s*\.h-input:focus-visible\s*\{\s*outline: var\(--focus-ring-width\) solid var\(--focus-ring\);/,
