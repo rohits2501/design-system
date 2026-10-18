@@ -11,7 +11,7 @@
 | `src/themes.ts`        | Theme object and preset metrics      |
 | `src/preset-colors.ts` | Locked colors                        |
 | `src/theme.css`        | Stay, the look with no `data-preset` |
-| `src/presets.css`      | Editorial, cinema, and access        |
+| `src/presets.css`      | Glass, editorial, cinema, and access |
 | `src/css.ts`           | Emits both CSS files                 |
 
 ## Commands
@@ -25,6 +25,7 @@ npm test -w @house/tokens
 
 - Follow the root rules.
 - Colors live in the token source. A raw color outside that source fails `npm run check:colors`.
+- `fontFamily.reading` and `fontFamily.dense` are names only. A Fontsource file is loaded only when a look uses that face.
 
 ## Gotchas
 

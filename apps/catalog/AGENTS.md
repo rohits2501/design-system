@@ -2,7 +2,7 @@
 
 ## Overview
 
-The catalog is a private Vite gallery. It installs `@house/tokens` and `@house/react` the way a consuming app does, and it loads the four Fontsource faces the presets name.
+The catalog is a private Vite gallery. It installs `@house/tokens` and `@house/react` the way a consuming app does, and it loads the six Fontsource faces a look uses.
 
 ## Key files
 
