@@ -8,6 +8,8 @@ Three apps already consume `theme.css` from vendored tarballs. Any change that a
 
 The looks borrow public patterns from well known products. Their fonts are licensed and cannot ship, and their brand colors are trademarked assets. Bright brand hexes also fail the package's own rule that one accent serves as both link text and the primary button fill.
 
+The shipped faces cover stay, cinema, access, and editorial titles. Editorial body text is still the system sans. Code is still the system mono. There is no named stack for a quieter long read, and none for a denser admin voice. Any face added here has to be one the package can ship.
+
 ## Options considered
 
 Documented from the phase 2 plan and the follow up conversation.
@@ -35,13 +37,38 @@ Every preset block ships in the one file every app imports.
 
 Also ruled out: adopting shadcn/ui, MUI, or Base UI as the styling layer (the package already does what their preset idea needs, and adopting them would add a second component API), and copying any gallery theme or preset string (licensing).
 
+### Option A: Fill the empty font roles (chosen)
+
+Keep the five looks. Put JetBrains Mono on every preset's mono stack. Put Newsreader on the editorial body and leave Fraunces on the titles. Export Source Sans 3 as `fontFamily.reading` and IBM Plex Sans as `fontFamily.dense`. The catalog loads the files and shows those two stacks. An app opts in by setting `--font-sans`.
+
+**Pros**: no new palette, no new contrast matrix, and the locked sans faces stay put.
+**Cons**: the two extra stacks do nothing until an app sets the variable. Editorial body becomes a serif even before Newsreader loads.
+
+### Option B: Replace stay and cinema
+
+Source Sans 3 replaces Plus Jakarta Sans. IBM Plex Sans replaces Inter Tight.
+
+**Pros**: every new face shows up the moment you switch looks.
+**Cons**: it throws away two locked faces and changes the default file every app already depends on.
+
+### Option C: A new preset per face
+
+Each new face gets colors, radius, and a contrast pass.
+
+**Pros**: the catalog switcher shows them with no extra specimen.
+**Cons**: four new palettes for a type choice, and the contrast work repeats for faces that do not need their own accent.
+
 ## Rationale
 
 The forces are coherence and one component API. Option 2 keeps the single TypeScript source. Option 3 is a reasonable later split if an app ever ships with a single preset and measures the cost; the emitter can produce it from the same model.
 
-Glass replaced house as the default, and a later choice replaced glass with stay. `theme.css`, `colors`, and `themes` are stay. Editorial, cinema, and access stay in `presets.css`. Apps already on an older tarball keep that pack's look until they take a new one. A change in this repo does not update those apps on its own.
+Glass replaced house as the default, and a later choice replaced glass with stay. Glass then came back as an opt in look: lighter frost (blur 20, alpha 0.62, saturate 1.8), capsule controls, and the system font. `theme.css`, `colors`, and `themes` stay stay. Apps already on an older tarball keep that pack's look until they take a new one. A change in this repo does not update those apps on its own.
 
 Presets are original values checked against the same contrast math, not brand copies. Accents sit near the inspiration in spirit and differ in hex. The `access` preset was added at the engineer's request as the plain, large type look of public service sites, and it is the only preset that changes control height and type scale, which is why those became tokens.
+
+The four added faces are Newsreader, Source Sans 3, IBM Plex Sans, and JetBrains Mono. Each publishes a Fontsource variable package under the SIL Open Font License 1.1, so the catalog can vendor the file the same way it already vendors Plus Jakarta Sans, Fraunces, Inter Tight, and Atkinson Hyperlegible Next. Geist stays out of this slice. Faces whose license is not the Open Font License stay out too.
+
+Option A wins because the empty roles are the code stack and the editorial body. The other two faces are voices an app chooses, not new products. Option B would reopen the default look. Option C would invent palettes the type choice does not need.
 
 Two corrections to the plan came from review: `backdrop-filter: blur(0px)` still creates a stacking context and a containing block for fixed children, so solid surfaces use `none` through `--surface-backdrop`; and an explicit `data-preset="house"` needs descendant pairs emitted last to beat another preset's descendant rules.
 
