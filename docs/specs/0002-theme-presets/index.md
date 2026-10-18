@@ -7,7 +7,7 @@
 
 Stay is the default look. `theme.css` and the `themes` object are stay, so a page with no `data-preset` is the stay look: pill controls, Plus Jakarta Sans, and a solid surface. Glass, editorial, cinema, and access live in an opt in `presets.css`. Glass frosts regular buttons and surfaces. There is no house preset. Light, dark, and high contrast still work inside every look. Components stay the same; they only read variables.
 
-Four more open faces join that contract. JetBrains Mono is the code face on every look. Newsreader is the editorial body, and Fraunces stays the large titles. Source Sans 3 and IBM Plex Sans are named stacks an app turns on itself. They are not new looks.
+Four more open faces join that contract. JetBrains Mono is the code face on every look. Newsreader is the editorial body, and Fraunces stays the large titles. Source Sans 3 and IBM Plex Sans stay as named stacks an app turns on itself. They are not new looks, and the catalog does not download their files. The catalog stylesheet had grown by loading faces no look paints.
 
 ## Requirements
 
@@ -16,7 +16,7 @@ Four more open faces join that contract. JetBrains Mono is the code face on ever
 - As an app author, I want to pick a distinct look for a new product without writing a palette, so that every product still shares one component API and one set of contrast guarantees.
 - As an existing app (the console, AudioForge, Bol), I want nothing to change unless I opt in, so that adopting a new version of the package is safe.
 - As a reader who needs larger text and bigger targets, I want an accessible preset whose text clears 7:1 in every appearance, so that a product can ship that look without custom work.
-- As an app author, I want a code face and two extra text voices I can turn on without a new palette, so that long reading and dense screens stay inside the same tokens.
+- As an app author, I want a code face on every look, and two named text stacks I can turn on in my own app, so that long reading and dense screens stay inside the same tokens without the catalog paying for files no look uses.
 
 **Acceptance criteria**:
 
@@ -29,7 +29,7 @@ Four more open faces join that contract. JetBrains Mono is the code face on ever
 - **AC-7**: Stay, editorial, cinema, and access are solid (`--surface-alpha: 1`, `--surface-backdrop: none`) in light, dark, and high contrast. Glass light and dark use `--surface-alpha: 0.62` and `--surface-backdrop: blur(20px) saturate(1.8)`. Glass high contrast is solid. `prefers-reduced-transparency: reduce` keeps every surface solid, including glass and the catalog columns.
 - **AC-8**: Components gain no new props. `Text` sizes xl and 2xl use `--font-display` and `--tracking-display`. `Button`, `IconButton`, and `.h-input` heights come from the control height variables. The rendered markup of the gallery is identical across presets.
 - **AC-9**: `themes` and `colors` equal the stay palette. `presets` has stay, glass, editorial, cinema, and access. Glass light and dark are frosted. High contrast material is always solid.
-- **AC-10**: The catalog has a preset switcher on the document element, loads every open family the tokens name (Plus Jakarta Sans, Fraunces, Inter Tight, Atkinson Hyperlegible Next, Newsreader, Source Sans 3, IBM Plex Sans, and JetBrains Mono), renders every preset in every appearance with the same primitives, and shows a specimen for the reading stack and the dense stack.
+- **AC-10**: The catalog has a preset switcher on the document element, loads the six open families a look uses (Plus Jakarta Sans, Fraunces, Inter Tight, Atkinson Hyperlegible Next, Newsreader, and JetBrains Mono), and renders every preset in every appearance with the same primitives. It does not load Source Sans 3 or IBM Plex Sans, and it shows no Faces sample.
 - **AC-11**: `theme.css` stays under its gzip ceiling (raised only if the new house variables require it), `presets.css` has its own ceiling, and the catalog ceilings sit about 10 percent above the measured sizes.
 - **AC-12**: No raw color appears outside the token source, `@house/tokens` ships no font binaries, and nothing calls a font CDN.
 - **AC-13**: Every preset, including the stay block in `theme.css`, sets `--font-mono` to `"JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace`. Editorial sets `--font-sans` to `"Newsreader Variable", "Newsreader", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif`, and keeps Fraunces as `--font-display`. `fontFamily.reading` is `"Source Sans 3 Variable", "Source Sans 3", ui-sans-serif, system-ui, sans-serif`. `fontFamily.dense` is `"IBM Plex Sans Variable", "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif`. Stay, glass, cinema, and access keep their current sans and display stacks. The two extra stacks are not presets.
@@ -59,7 +59,7 @@ Presets are named sets of token values selected by `data-preset`, orthogonal to 
 
 Each open family is named as `"<Family> Variable"` first (the name Fontsource variable packages register), then the static family, then the system.
 
-Every preset shares one mono stack: JetBrains Mono, then the system mono. Editorial body text is Newsreader. Two more stacks live on `fontFamily` and on no preset: `reading` (Source Sans 3) and `dense` (IBM Plex Sans). An app opts in by setting `--font-sans` to that stack. The catalog imports `@fontsource-variable/newsreader`, `@fontsource-variable/source-sans-3`, `@fontsource-variable/ibm-plex-sans`, and `@fontsource-variable/jetbrains-mono`, all SIL Open Font License 1.1. Tokens still ship no font files.
+Every preset shares one mono stack: JetBrains Mono, then the system mono. Editorial body text is Newsreader. Two more stacks live on `fontFamily` and on no preset: `reading` (Source Sans 3) and `dense` (IBM Plex Sans). An app opts in by setting `--font-sans` to that stack and installing the package itself. The catalog imports `@fontsource-variable/newsreader` and `@fontsource-variable/jetbrains-mono`, plus the four faces the other looks already use. It does not import `@fontsource-variable/source-sans-3` or `@fontsource-variable/ibm-plex-sans`, and it has no Faces sample. Every named family is SIL Open Font License 1.1. Tokens still ship no font files.
 
 **CSS contract**:
 
@@ -93,8 +93,8 @@ New variables on every block: `--font-display`, `--tracking-display`, `--surface
 | Show a real font      | the font file                                   | the app or catalog imports the Fontsource package; tokens name the family only            |
 | Code text             | `--font-mono`                                   | the shared JetBrains Mono stack on every preset, including stay in `theme.css`            |
 | Editorial body        | `--font-sans` on the editorial preset           | the Newsreader stack; `--font-display` stays Fraunces                                     |
-| Long product reading  | the reading stack                               | `fontFamily.reading` (Source Sans 3); the app sets `--font-sans` to it                    |
-| Dense admin text      | the dense stack                                 | `fontFamily.dense` (IBM Plex Sans); the app sets `--font-sans` to it                      |
+| Long product reading  | the reading stack                               | `fontFamily.reading` (Source Sans 3); the app sets `--font-sans` and loads the file       |
+| Dense admin text      | the dense stack                                 | `fontFamily.dense` (IBM Plex Sans); the app sets `--font-sans` and loads the file         |
 | Native screen         | any value                                       | `presets[name][appearance]` or `themes` (stay)                                            |
 
 **Key invariants**:
@@ -111,7 +111,7 @@ New variables on every block: `--font-display`, `--tracking-display`, `--surface
 - Selector order assertions in the emitted `presets.css` (preset blocks, media rules, reduced transparency last), verifies **AC-2**, **AC-3**, **AC-4**, **AC-5**, **AC-7**.
 - Contrast matrix over `presetNames` by `themeNames`, plus 7:1 for access, verifies **AC-6**.
 - Token object: `themes` equals `presets.stay`, JSON round trip, high contrast material solid, verifies **AC-9**.
-- Catalog: identical markup per preset, the eight Fontsource imports, and a reading specimen plus a dense specimen, verifies **AC-8**, **AC-10**.
+- Catalog: identical markup per preset, the six Fontsource imports a look uses, no Faces sample, and no Source Sans 3 or IBM Plex Sans import, verifies **AC-8**, **AC-10**.
 - Emitted stacks: shared mono, editorial sans, `fontFamily.reading`, and `fontFamily.dense` match the strings in **AC-13**. Stay, glass, cinema, and access sans and display stacks are unchanged.
 - `npm run check:budget` and `npm run check:colors`, verifies **AC-11**, **AC-12**.
 
@@ -123,14 +123,16 @@ New variables on every block: `--font-display`, `--tracking-display`, `--surface
 4. Component rules in `styles.css` (done, `73dd75b`), satisfies **AC-7**, **AC-8**.
 5. Catalog: preset switcher, `presets.css`, four Fontsource packages, catalog test, browser check of every preset and appearance (done, `30a7bf7`), satisfies **AC-8**, **AC-10**.
 6. Budgets, architecture doc, README, version 0.2.0 (done), satisfies **AC-11**, **AC-12**.
-7. Name the four stacks in `themes.ts` (shared mono, editorial sans, `fontFamily.reading`, `fontFamily.dense`) and emit them, satisfies **AC-13**.
-8. Catalog imports the four packages and shows the reading and dense specimens beside the existing gallery, satisfies **AC-10**, **AC-13**.
+7. Name the four stacks in `themes.ts` (shared mono, editorial sans, `fontFamily.reading`, `fontFamily.dense`) and emit them (done), satisfies **AC-13**.
+8. Catalog imported Newsreader, Source Sans 3, IBM Plex Sans, and JetBrains Mono, and showed the reading and dense specimens (done, then narrowed by task 9), satisfies **AC-13**.
+9. Remove `@fontsource-variable/source-sans-3` and `@fontsource-variable/ibm-plex-sans` from the catalog (`apps/catalog/package.json`, `main.tsx`, and lockfile), remove the Faces section from `App.tsx`, and update catalog tests (`main.test.ts`, `catalog.test.tsx`) and `docs/architecture.md`. Keep `fontFamily.reading` and `fontFamily.dense` in tokens. Run `npm run ready`, read the gzipped catalog CSS from `npm run check:budget`, and set `perf/budgets.json` catalog CSS `maxBytes` to about 10 percent above that measured size in the same change (done), satisfies **AC-10**, **AC-11**.
 
 ## Consequences
 
 **Positive**:
 
 - New products get a distinct look without a second palette or a component fork.
+- The catalog stylesheet stops paying for two faces no look uses.
 - Existing apps are untouched until they opt in.
 
 **Negative / tradeoffs**:
@@ -141,6 +143,7 @@ New variables on every block: `--font-display`, `--tracking-display`, `--surface
 - Preset scoping is page level (`html`) plus appearance on descendants. A whole nested preset subtree is not supported.
 - Editorial body falls back to a serif (Georgia and its neighbors) when Newsreader is not loaded, so that look's body is no longer the system sans.
 - `theme.css` names JetBrains Mono. An app that does not load the file still renders the system mono. The family name in the file changes on the next pack.
+- Source Sans 3 and IBM Plex Sans stay as names only. An app that copies the stack and does not install the package gets the system sans. The catalog no longer proves those two faces on screen.
 
 **Neutral**:
 
