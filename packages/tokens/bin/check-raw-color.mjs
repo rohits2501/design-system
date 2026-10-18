@@ -13,7 +13,14 @@
  *
  * A line containing `raw-color-ignore` is skipped.
  */
-import { readFileSync, readdirSync, statSync, writeFileSync, existsSync } from "node:fs";
+import {
+  readFileSync,
+  readdirSync,
+  realpathSync,
+  statSync,
+  writeFileSync,
+  existsSync,
+} from "node:fs";
 import { extname, join, relative, resolve, sep } from "node:path";
 import { pathToFileURL } from "node:url";
 
@@ -158,6 +165,7 @@ export function main(argv = process.argv.slice(2), cwd = process.cwd(), log = co
   return 0;
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
+// npm runs bins through a symlink in node_modules/.bin, so compare real paths.
+if (process.argv[1] && import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href) {
   process.exitCode = main();
 }

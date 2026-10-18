@@ -1,4 +1,5 @@
-import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { mkdtempSync, readFileSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -68,4 +69,15 @@ test("a baseline lets legacy files through but still fails new ones", () => {
 
   writeFileSync(join(dir, "new.tsx"), 'const c = "#abcdef";\n');
   expect(main([".", "--baseline", "baseline.json"], dir, quiet)).toBe(1);
+});
+
+test("run through an npm bin symlink, the CLI still scans and fails", () => {
+  const dir = mkdtempSync(join(tmpdir(), "raw-color-bin-"));
+  writeFileSync(join(dir, "bad.css"), ".a { color: #123456; }\n");
+  const link = join(dir, "house-check-raw-color");
+  symlinkSync(join(pkg, "bin/check-raw-color.mjs"), link);
+
+  const run = spawnSync(process.execPath, [link, "."], { cwd: dir, encoding: "utf8" });
+  expect(run.status).toBe(1);
+  expect(run.stderr).toContain("bad.css:1:13  raw hex #123456");
 });
