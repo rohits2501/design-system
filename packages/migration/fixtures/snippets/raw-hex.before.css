@@ -1,0 +1,22 @@
+.card {
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  color: #212121;
+}
+.card__meta {
+  color: #757575;
+}
+.card__action {
+  background: #1976d2;
+  color: #ffffff;
+}
+.card__action:hover {
+  background: #1565c0;
+}
+.card__error {
+  color: #d32f2f;
+  background: #fdeded;
+}
+.card__debug {
+  outline: 1px dashed #ff00ff;
+}

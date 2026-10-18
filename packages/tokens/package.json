@@ -23,7 +23,8 @@
       "types": "./dist/index.d.mts",
       "default": "./dist/index.mjs"
     },
-    "./theme.css": "./src/theme.css"
+    "./theme.css": "./src/theme.css",
+    "./check-raw-color": "./bin/check-raw-color.mjs"
   },
   "scripts": {
     "emit": "node scripts/emit-css.ts",

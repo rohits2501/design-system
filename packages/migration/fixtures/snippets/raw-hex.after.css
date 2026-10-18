@@ -1,0 +1,19 @@
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.card__meta {
+  color: var(--text-muted);
+}
+.card__action {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+.card__action:hover {
+  background: color-mix(in srgb, var(--accent) 88%, var(--text));
+}
+.card__error {
+  color: var(--danger);
+  background: var(--danger-subtle);
+}

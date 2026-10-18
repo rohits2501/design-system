@@ -1,0 +1,11 @@
+{
+  "paths": ["packages", "apps", "scripts"],
+  "allow": [
+    "packages/tokens/src",
+    "packages/tokens/fixtures",
+    "packages/tokens/tests",
+    "packages/migration/src",
+    "packages/migration/fixtures",
+    "packages/migration/tests"
+  ]
+}

@@ -12,6 +12,7 @@ export default defineConfig({
         pkgExports["."] = typed;
         pkgExports["./tokens"] = typed;
         pkgExports["./theme.css"] = "./src/theme.css";
+        pkgExports["./check-raw-color"] = "./bin/check-raw-color.mjs";
         return pkgExports;
       },
     },

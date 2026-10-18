@@ -50,18 +50,11 @@ describe("fixtures", () => {
   });
 });
 
-test("this repo is clean outside the token source and the fixtures", () => {
-  const offenders = scan({
-    paths: ["packages", "apps", "scripts"],
-    allow: [
-      "packages/tokens/src",
-      "packages/tokens/fixtures",
-      "packages/tokens/tests",
-      "packages/migration/fixtures",
-    ],
-    cwd: repo,
-  });
+test("this repo is clean outside the allowed token source, tables, and fixtures", () => {
+  const config = JSON.parse(readFileSync(join(repo, "raw-color.config.json"), "utf8"));
+  const offenders = scan({ paths: config.paths, allow: config.allow, cwd: repo });
   expect(offenders.map((o: { file: string }) => o.file)).toEqual([]);
+  expect(main(["--config", "raw-color.config.json"], repo, quiet)).toBe(0);
 });
 
 test("a baseline lets legacy files through but still fails new ones", () => {

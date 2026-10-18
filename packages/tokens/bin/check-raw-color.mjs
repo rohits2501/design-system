@@ -4,7 +4,9 @@
  * No dependencies, so any repo can run it as is:
  *
  *   house-check-raw-color [paths...] [--allow <path>]... [--baseline <file>] [--write-baseline]
+ *   house-check-raw-color --config raw-color.config.json
  *
+ * --config          JSON with `paths`, `allow`, and `baseline`; flags add to it
  * --allow           a path prefix whose files may hold raw colors (the token source)
  * --baseline        JSON list of files that predate adoption; only new files are checked
  * --write-baseline  record today's offenders into the baseline file and exit 0
@@ -99,11 +101,16 @@ export function scan({ paths = ["."], allow = [], baseline = [], cwd = process.c
   return offenders;
 }
 
-function parseArgs(argv) {
+function parseArgs(argv, cwd) {
   const options = { paths: [], allow: [], baseline: undefined, writeBaseline: false };
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
-    if (arg === "--allow") options.allow.push(argv[++i]);
+    if (arg === "--config") {
+      const config = JSON.parse(readFileSync(resolve(cwd, argv[++i]), "utf8"));
+      options.paths.push(...(config.paths ?? []));
+      options.allow.push(...(config.allow ?? []));
+      options.baseline ??= config.baseline;
+    } else if (arg === "--allow") options.allow.push(argv[++i]);
     else if (arg === "--baseline") options.baseline = argv[++i];
     else if (arg === "--write-baseline") options.writeBaseline = true;
     else options.paths.push(arg);
@@ -113,7 +120,7 @@ function parseArgs(argv) {
 }
 
 export function main(argv = process.argv.slice(2), cwd = process.cwd(), log = console) {
-  const options = parseArgs(argv);
+  const options = parseArgs(argv, cwd);
   const baselinePath = options.baseline ? resolve(cwd, options.baseline) : undefined;
   const baseline =
     baselinePath && existsSync(baselinePath) && !options.writeBaseline
