@@ -132,6 +132,9 @@ A second axis beside light, dark, and high contrast. Stay is the default look in
   - [x] Components read the new variables (AC-7, AC-8)
   - [x] Catalog preset switcher and fonts (AC-8, AC-10)
   - [x] Budgets, docs, and version 0.2.0 (AC-11, AC-12)
+  - [x] Name the four font stacks and emit them (AC-13)
+  - [x] Catalog loads the four faces and shows the reading and dense specimens (AC-10, AC-13)
+  - [x] Drop Source Sans 3 and IBM Plex Sans from the catalog load and lower the CSS ceiling (AC-10, AC-11)
 - [x] Verify it: `/check verify theme presets`
 - [x] Test it: `/test theme presets`
 
