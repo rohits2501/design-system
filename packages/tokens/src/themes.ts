@@ -83,7 +83,9 @@ export const fontWeight = {
 /** Web font stacks. An app may override `--font-sans` with its own voice. */
 export const fontFamily = {
   sans: 'ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-  mono: 'ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace',
+  mono: '"JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace',
+  reading: '"Source Sans 3 Variable", "Source Sans 3", ui-sans-serif, system-ui, sans-serif',
+  dense: '"IBM Plex Sans Variable", "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif',
 } as const;
 
 export const focusRing = {
@@ -142,7 +144,7 @@ export const presetMetrics: Record<PresetName, PresetMetrics> = {
       "2xl": { size: 64, lineHeight: 72 },
     },
     fontFamily: {
-      sans: fontFamily.sans,
+      sans: '"Newsreader Variable", "Newsreader", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif',
       display:
         '"Fraunces Variable", "Fraunces", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif',
       mono: fontFamily.mono,

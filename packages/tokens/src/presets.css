@@ -150,7 +150,7 @@ html[data-preset="editorial"],
   --line-height-xl: 3rem;
   --font-size-2xl: 4rem;
   --line-height-2xl: 4.5rem;
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-sans: "Newsreader Variable", "Newsreader", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
   --font-display: "Fraunces Variable", "Fraunces", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
   --tracking-display: -0.03em;
   --bg: #f6f1e8;
