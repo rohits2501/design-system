@@ -1,7 +1,7 @@
 import type { ColorRoles, ThemeName } from "./themes.ts";
 
 /**
- * Locked color roles for the non-house presets, one map per appearance.
+ * Locked color roles for every preset, one map per appearance. Glass is the default.
  * Each value passed the contrast bars in tests/contrast.test.ts before it was locked.
  * Change a hex only together with that test.
  */

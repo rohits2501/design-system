@@ -32,9 +32,12 @@ test("presets reach components only through variables", () => {
   );
 });
 
-test("house surfaces stay solid with no backdrop", () => {
-  expect(theme).toContain("--surface-alpha: 1;");
-  expect(theme).toContain("--surface-backdrop: none;");
+test("the default theme is frosted glass and its high contrast is solid", () => {
+  const root = theme.slice(theme.indexOf(":root {"), theme.indexOf("}"));
+  expect(root).toContain("--surface-backdrop: blur(24px);");
+  const hcStart = theme.indexOf('[data-theme="high-contrast"]');
+  const hc = theme.slice(hcStart, theme.indexOf("}", hcStart));
+  expect(hc).toContain("--surface-backdrop: none;");
 });
 
 test("interactive primitives draw the shared focus ring", () => {

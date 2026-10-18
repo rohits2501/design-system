@@ -11,7 +11,7 @@ import {
 
 const presetsCss = readFileSync(new URL("../src/presets.css", import.meta.url), "utf8");
 const themeCss = readFileSync(new URL("../src/theme.css", import.meta.url), "utf8");
-const others = presetNames.filter((name) => name !== "house");
+const optIn = presetNames.filter((name) => name !== "glass");
 
 /** The body of the first rule whose selector list starts with `selector`. */
 function rule(css: string, selector: string): string {
@@ -24,23 +24,28 @@ test("checked in presets.css matches the token source (run `npm run emit` to ref
   expect(presetsCss).toBe(renderPresetsCss());
 });
 
-describe("theme.css stays house only", () => {
+describe("theme.css is the glass default", () => {
   test("no preset selectors", () => {
     expect(themeCss).not.toContain("data-preset");
   });
 
-  test("new variables carry house defaults", () => {
+  test("root carries glass", () => {
     const root = rule(themeCss, ":root {");
-    expect(root).toContain("--font-display: ui-sans-serif");
-    expect(root).toContain("--tracking-display: 0em;");
-    expect(root).toContain("--surface-alpha: 1;");
-    expect(root).toContain("--surface-backdrop: none;");
-    expect(root).toContain("--control-height-sm: 28px;");
+    expect(root).toContain("--radius-sm: 999px;");
+    expect(root).toContain("--font-display: -apple-system");
+    expect(root).toContain("--surface-alpha: 0.72;");
+    expect(root).toContain("--surface-backdrop: blur(24px);");
     expect(root).toContain("--control-height-md: 36px;");
+  });
+
+  test("high contrast on the default is solid", () => {
+    const hc = rule(themeCss, '[data-theme="high-contrast"] {');
+    expect(hc).toContain("--surface-alpha: 1;");
+    expect(hc).toContain("--surface-backdrop: none;");
   });
 });
 
-describe.each(others)("%s preset rules", (preset) => {
+describe.each(optIn)("%s preset rules", (preset) => {
   const p = `[data-preset="${preset}"]`;
 
   test("page level and descendant selectors for every appearance", () => {
@@ -63,34 +68,13 @@ describe.each(others)("%s preset rules", (preset) => {
     const hc = rule(presetsCss, `html${p}[data-theme="high-contrast"]`);
     expect(hc).not.toContain("blur(");
   });
-
-  test("comes before the explicit house rules", () => {
-    expect(presetsCss.indexOf(`html${p}`)).toBeLessThan(
-      presetsCss.indexOf('[data-preset="house"] {'),
-    );
-  });
 });
 
-test("only glass light and dark set a backdrop blur", () => {
-  const blurs = presetsCss.match(/--surface-backdrop: blur\(24px\)/g) ?? [];
-  // glass light, dark, and the dark media rule
-  expect(blurs).toHaveLength(3);
-  for (const attr of ["light,", '[data-theme="dark"]']) {
-    const selector =
-      attr === "light," ? 'html[data-preset="glass"],' : `html[data-preset="glass"]${attr}`;
-    expect(rule(presetsCss, selector)).toContain("--surface-alpha: 0.72;");
-  }
-});
-
-test("explicit house covers itself, its descendants, and follows the nearest data-theme", () => {
-  for (const attr of ["light", "dark", "high-contrast"]) {
-    expect(presetsCss).toContain(`[data-preset="house"][data-theme="${attr}"],`);
-    expect(presetsCss).toContain(`[data-preset="house"] [data-theme="${attr}"],`);
-    expect(presetsCss).toContain(`[data-theme="${attr}"] [data-preset="house"]:not([data-theme])`);
-  }
-  const house = rule(presetsCss, '[data-preset="house"] {');
-  expect(house).toContain("--control-height-md: 36px;");
-  expect(house).toContain("--surface-backdrop: none;");
+test("glass lives only in theme.css, and house is gone", () => {
+  expect(presetsCss).not.toContain('data-preset="glass"');
+  expect(presetsCss).not.toContain('data-preset="house"');
+  expect(themeCss).not.toContain("data-preset");
+  expect(presetsCss).not.toContain("blur(");
 });
 
 test("reduced transparency is the last rule and resets every scope", () => {
@@ -105,8 +89,8 @@ test("presets.css names no font file or font CDN", () => {
 });
 
 describe("token object", () => {
-  test("themes is house", () => {
-    expect(themes).toEqual(presets.house);
+  test("themes is the glass default", () => {
+    expect(themes).toEqual(presets.glass);
   });
 
   test.each(presetNames)("%s is plain JSON with solid high contrast", (name) => {

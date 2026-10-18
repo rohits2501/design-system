@@ -122,8 +122,8 @@ code in `packages/migration/`
 
 ### 12. Theme presets · in-progress
 
-A second axis beside light, dark, and high contrast: five original looks (glass, editorial, stay, cinema, access) on the same roles and the same components. Apps opt in; house stays the default and existing apps do not change.
-**Done when:** every preset passes the contrast bars in every appearance (access at 7:1 everywhere), apps that import only `theme.css` see no change, and the catalog shows every preset without a component change.
+A second axis beside light, dark, and high contrast. Glass is the default look in `theme.css`, in the place house used to hold. Editorial, stay, cinema, and access are opt in through `presets.css`.
+**Done when:** every preset passes the contrast bars in every appearance (access at 7:1 everywhere), a page with no `data-preset` renders glass, and the catalog shows every preset without a component change.
 
 - [x] Design it (spec): `/architect theme presets`
 - [x] Build it: `/develop theme presets`

@@ -25,7 +25,6 @@ const themeLabel: Record<ThemeName, string> = {
 };
 
 const presetLabel: Record<PresetName, string> = {
-  house: "House",
   glass: "Glass",
   editorial: "Editorial",
   stay: "Stay",
@@ -35,7 +34,7 @@ const presetLabel: Record<PresetName, string> = {
 
 export function App({
   initialView = "side-by-side",
-  initialPreset = "house",
+  initialPreset = "glass",
 }: {
   initialView?: View;
   initialPreset?: PresetName;
@@ -45,7 +44,7 @@ export function App({
 
   useEffect(() => {
     const root = document.documentElement;
-    if (preset === "house") root.removeAttribute("data-preset");
+    if (preset === "glass") root.removeAttribute("data-preset");
     else root.setAttribute("data-preset", preset);
   }, [preset]);
 

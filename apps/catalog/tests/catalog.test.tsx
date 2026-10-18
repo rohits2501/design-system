@@ -20,7 +20,7 @@ test("light, dark, and high contrast render the same primitives with no componen
   expect(hc).toBe(light);
 });
 
-test.each(presetNames)("the %s preset renders the same gallery markup as house", (preset) => {
+test.each(presetNames)("the %s preset renders the same gallery markup as the default", (preset) => {
   const gallery = (html: string) =>
     html.slice(html.indexOf('<div class="catalog-columns">')).replace(/_R_[a-z0-9]+_/gi, "id");
   expect(gallery(renderToStaticMarkup(<App initialPreset={preset} />))).toBe(

@@ -2,7 +2,7 @@
 
 ## One source, two outputs
 
-`packages/tokens/src/themes.ts` is the only place a color value is chosen. It points semantic roles at the primitive ramps in `palette.ts`. From that one source:
+`packages/tokens/src/preset-colors.ts` is the only place a color value is chosen. `themes.ts` turns those roles into the token object. From that one source:
 
 - `theme.css` is generated (`npm run emit -w @house/tokens`). A test fails if the checked in file drifts from the source.
 - The package entry exports the same values as a plain object (`themes.light.color.bg`), so a React Native `StyleSheet` reads roles without importing CSS or React.
@@ -33,9 +33,9 @@ Contrast is a test, not a review: every text role clears 4.5:1 on every backgrou
 
 ## Presets
 
-A preset is a second axis beside the theme: `data-preset` picks a look (`glass`, `editorial`, `stay`, `cinema`, `access`), `data-theme` still picks light, dark, or high contrast inside it. House is the default and needs no attribute. Presets live in `presetMetrics` and `preset-colors.ts`, and emit to a separate opt in `presets.css`, so an app that imports only `theme.css` gets no preset bytes and no change.
+A preset is a second axis beside the theme: `data-preset` picks a look, and `data-theme` still picks light, dark, or high contrast inside it. Glass is the default and needs no attribute: `theme.css` and `themes` are glass. Editorial, stay, cinema, and access live in the opt in `presets.css`. There is no house preset.
 
-- Set `data-preset` on `html`. Descendants may carry `data-theme` (the catalog columns do) and follow the page preset. A subtree with `data-preset="house"` renders house; any other nested preset is not supported.
+- Set `data-preset` on `html` to leave glass. Descendants may carry `data-theme` (the catalog columns do) and follow the page preset. A nested preset inside another preset is not supported.
 - A preset sets colors, radius, type scale, sans and display stacks, display tracking, control heights, focus ring width, and surface material. Components read these through `--font-display`, `--tracking-display`, `--control-height-sm`, `--control-height-md`, `--surface-alpha`, and `--surface-backdrop`; none of them branch on the preset.
 - `glass` and `stay` set `--radius-sm` to 999, so buttons and inputs become pills and icon buttons become circles. Style a multi line text area with `--radius-md`.
 - Only `glass` is frosted (72% surface, 24px blur) and only in light and dark. High contrast and `prefers-reduced-transparency: reduce` are always solid. Contrast is tested on the solid color.
@@ -45,7 +45,7 @@ A preset is a second axis beside the theme: `data-preset` picks a look (`glass`,
 
 ## Accent
 
-One accent, an indigo. It is the only brand color in the default theme. An app that needs a different voice overrides `--accent` (and `--font-sans`) on a wrapper. It does not add a second palette, and a second accent is a named theme override in this package, not a file in the app.
+The default accent is glass blue. An app that needs a different voice overrides `--accent` (and `--font-sans`) on a wrapper, or picks a preset. It does not add a second palette.
 
 ## Primitives
 

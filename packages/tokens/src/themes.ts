@@ -1,4 +1,3 @@
-import { palette as p } from "./palette.ts";
 import { presetColors } from "./preset-colors.ts";
 
 /** Semantic color roles. The only color API product code may use. */
@@ -38,78 +37,10 @@ export const themeAttribute: Record<ThemeName, string> = {
   highContrast: "high-contrast",
 };
 
-const light: ColorRoles = {
-  bg: p.neutral[50],
-  bgSubtle: p.neutral[100],
-  surface: p.neutral[0],
-  surfaceRaised: p.neutral[0],
-  text: p.neutral[900],
-  textMuted: p.neutral[600],
-  border: p.neutral[200],
-  borderStrong: p.neutral[500],
-  accent: p.accent[600],
-  accentContrast: p.neutral[0],
-  accentSubtle: p.accent[50],
-  focusRing: p.accent[600],
-  success: p.green[700],
-  successSubtle: p.green[50],
-  warning: p.amber[700],
-  warningSubtle: p.amber[50],
-  danger: p.red[700],
-  dangerSubtle: p.red[50],
-  info: p.blue[700],
-  infoSubtle: p.blue[50],
-};
+/** The default palette. Glass, in light, dark, and high contrast. */
+export const colors: Record<ThemeName, ColorRoles> = presetColors.glass;
 
-const dark: ColorRoles = {
-  bg: p.neutral[950],
-  bgSubtle: p.neutral[900],
-  surface: p.neutral[900],
-  surfaceRaised: p.neutral[850],
-  text: p.neutral[50],
-  textMuted: p.neutral[400],
-  border: p.neutral[800],
-  borderStrong: p.neutral[500],
-  accent: p.accent[400],
-  accentContrast: p.neutral[950],
-  accentSubtle: p.accent[950],
-  focusRing: p.accent[300],
-  success: p.green[400],
-  successSubtle: p.green[950],
-  warning: p.amber[400],
-  warningSubtle: p.amber[950],
-  danger: p.red[400],
-  dangerSubtle: p.red[950],
-  info: p.blue[400],
-  infoSubtle: p.blue[950],
-};
-
-const highContrast: ColorRoles = {
-  bg: p.neutral[0],
-  bgSubtle: p.neutral[100],
-  surface: p.neutral[0],
-  surfaceRaised: p.neutral[0],
-  text: p.neutral[1000],
-  textMuted: p.neutral[800],
-  border: p.neutral[1000],
-  borderStrong: p.neutral[1000],
-  accent: p.accent[800],
-  accentContrast: p.neutral[0],
-  accentSubtle: p.accent[50],
-  focusRing: p.neutral[1000],
-  success: p.green[900],
-  successSubtle: p.green[50],
-  warning: p.amber[900],
-  warningSubtle: p.amber[50],
-  danger: p.red[900],
-  dangerSubtle: p.red[50],
-  info: p.blue[900],
-  infoSubtle: p.blue[50],
-};
-
-export const colors: Record<ThemeName, ColorRoles> = { light, dark, highContrast };
-
-export const presetNames = ["house", "glass", "editorial", "stay", "cinema", "access"] as const;
+export const presetNames = ["glass", "editorial", "stay", "cinema", "access"] as const;
 export type PresetName = (typeof presetNames)[number];
 
 /** Spacing on a 4px grid, in pixels. */
@@ -186,7 +117,8 @@ function stack(first: string[]): string {
   return [...first, 'ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif'].join(", ");
 }
 
-const houseMetrics: PresetMetrics = {
+/** Shared metrics the other presets start from. Glass overrides radius, font, and material. */
+const baseMetrics: PresetMetrics = {
   radius,
   fontSize,
   fontFamily: { sans: fontFamily.sans, display: fontFamily.sans, mono: fontFamily.mono },
@@ -201,9 +133,8 @@ const houseMetrics: PresetMetrics = {
  * then the static family an app may self-host, then the system.
  */
 export const presetMetrics: Record<PresetName, PresetMetrics> = {
-  house: houseMetrics,
   glass: {
-    ...houseMetrics,
+    ...baseMetrics,
     radius: { sm: 999, md: 16, pill: 999 },
     fontFamily: {
       sans: '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
@@ -213,7 +144,7 @@ export const presetMetrics: Record<PresetName, PresetMetrics> = {
     material: { blur: 24, alpha: 0.72 },
   },
   editorial: {
-    ...houseMetrics,
+    ...baseMetrics,
     radius: { sm: 0, md: 0, pill: 999 },
     fontSize: {
       ...fontSize,
@@ -229,7 +160,7 @@ export const presetMetrics: Record<PresetName, PresetMetrics> = {
     trackingDisplay: -0.03,
   },
   stay: {
-    ...houseMetrics,
+    ...baseMetrics,
     radius: { sm: 999, md: 12, pill: 999 },
     fontFamily: {
       sans: stack(['"Plus Jakarta Sans Variable"', '"Plus Jakarta Sans"']),
@@ -238,7 +169,7 @@ export const presetMetrics: Record<PresetName, PresetMetrics> = {
     },
   },
   cinema: {
-    ...houseMetrics,
+    ...baseMetrics,
     radius: { sm: 2, md: 4, pill: 999 },
     fontFamily: {
       sans: stack(['"Inter Tight Variable"', '"Inter Tight"', "Inter"]),
@@ -248,7 +179,7 @@ export const presetMetrics: Record<PresetName, PresetMetrics> = {
     trackingDisplay: -0.02,
   },
   access: {
-    ...houseMetrics,
+    ...baseMetrics,
     radius: { sm: 4, md: 4, pill: 999 },
     fontSize: {
       xs: { size: 14, lineHeight: 20 },
@@ -268,11 +199,8 @@ export const presetMetrics: Record<PresetName, PresetMetrics> = {
   },
 };
 
-/** Color roles for every preset and appearance. `house` is the default palette above. */
-export const presetColorRoles: Record<PresetName, Record<ThemeName, ColorRoles>> = {
-  house: colors,
-  ...presetColors,
-};
+/** Color roles for every preset and appearance. `glass` is `colors`, the default. */
+export const presetColorRoles: Record<PresetName, Record<ThemeName, ColorRoles>> = presetColors;
 
 export interface Theme {
   name: ThemeName;
@@ -315,8 +243,8 @@ function appearances(preset: PresetName): Record<ThemeName, Theme> {
   };
 }
 
-/** Plain values for React Native `StyleSheet` and other non CSS consumers. This is `house`. */
-export const themes: Record<ThemeName, Theme> = appearances("house");
+/** Plain values for React Native `StyleSheet` and other non CSS consumers. This is `glass`, the default preset. */
+export const themes: Record<ThemeName, Theme> = appearances("glass");
 
 /** Every preset in every appearance, e.g. `presets.glass.dark.color.accent`. */
 export const presets = Object.fromEntries(

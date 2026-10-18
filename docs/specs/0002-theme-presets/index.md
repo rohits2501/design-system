@@ -5,7 +5,7 @@
 
 ## Summary
 
-The house design system gets five optional looks, called presets: glass, editorial, stay, cinema, and access. A preset changes colors, corner shapes, fonts, and a few sizes, while light, dark, and high contrast still work inside each one. Apps opt in by importing one extra CSS file and setting `data-preset` on the page, so apps that only import `theme.css` see no change. Components stay the same; they only read variables.
+Glass is the default look, in the place house used to hold. `theme.css` and the `themes` object are glass, so a page with no `data-preset` is frosted glass. Editorial, stay, cinema, and access live in an opt in `presets.css`. There is no house preset. Light, dark, and high contrast still work inside every look. Components stay the same; they only read variables.
 
 ## Requirements
 
@@ -17,15 +17,15 @@ The house design system gets five optional looks, called presets: glass, editori
 
 **Acceptance criteria**:
 
-- **AC-1**: An app that imports only `theme.css` renders as before. Every existing house value is unchanged, `theme.css` contains no `data-preset` selector, and the new variables carry house defaults: `--font-display` equals the sans stack, `--tracking-display: 0em`, `--surface-alpha: 1`, `--surface-backdrop: none`, `--control-height-sm: 28px`, `--control-height-md: 36px`.
+- **AC-1**: An app that imports only `theme.css` renders the glass preset. `theme.css` contains no `data-preset` selector. `:root` carries glass: `--radius-sm: 999px`, the Apple system stack, `--surface-alpha: 0.72`, `--surface-backdrop: blur(24px)`, `--control-height-sm: 28px`, `--control-height-md: 36px`. Its high contrast block is solid (`--surface-backdrop: none`).
 - **AC-2**: With `presets.css` imported and `<html data-preset="P">`, the page takes preset P's metrics and its light colors. Adding `data-theme="dark"` or `"high-contrast"` on `html` gives P's dark or high contrast colors.
-- **AC-3**: With `data-preset` set and no `data-theme`, the operating system's dark setting and its more contrast setting pick P's dark and high contrast blocks. With neither attribute set, the page resolves to house exactly as today.
+- **AC-3**: With `data-preset` set and no `data-theme`, the operating system's dark setting and its more contrast setting pick P's dark and high contrast blocks. With neither attribute set, the page resolves to glass.
 - **AC-4**: An element carrying `data-theme` inside `<html data-preset="P">` gets P's colors for that appearance, so catalog columns follow the active preset.
-- **AC-5**: An element carrying `data-preset="house"`, with or without its own `data-theme`, renders house values even inside another preset.
+- **AC-5**: `presets.css` has no `house` or `glass` selector. Glass is only `theme.css`. Setting `data-preset` to editorial, stay, cinema, or access overrides it, and clearing the attribute returns to glass.
 - **AC-6**: Every preset in every appearance passes the existing contrast bars: text 4.5:1 in light and dark, 7:1 in high contrast, control outline and focus ring 3:1. `access` text pairs clear 7:1 in all three appearances.
 - **AC-7**: Glass light and dark paint surfaces at 72 percent opacity with a 24px backdrop blur. Glass high contrast, every other preset, house, and anything under `prefers-reduced-transparency: reduce` (including catalog columns) are solid with `backdrop-filter: none`.
 - **AC-8**: Components gain no new props. `Text` sizes xl and 2xl use `--font-display` and `--tracking-display`. `Button`, `IconButton`, and `.h-input` heights come from the control height variables. The rendered markup of the gallery is identical across presets.
-- **AC-9**: The token object stays backward compatible. `themes` is house and unchanged in value. `presets[name][appearance]` is plain JSON for every preset, and high contrast material is always solid.
+- **AC-9**: `themes` and `colors` equal the glass palette. `presets` has glass, editorial, stay, cinema, and access. High contrast material is always solid.
 - **AC-10**: The catalog has a preset switcher on the document element, loads the four open font families, and renders every preset in every appearance with the same primitives.
 - **AC-11**: `theme.css` stays under its gzip ceiling (raised only if the new house variables require it), `presets.css` has its own ceiling, and the catalog ceilings sit about 10 percent above the measured sizes.
 - **AC-12**: No raw color appears outside the token source, `@house/tokens` ships no font binaries, and nothing calls a font CDN.
@@ -47,7 +47,6 @@ Presets are named sets of token values selected by `data-preset`, orthogonal to 
 
 | Preset    | Radius sm/md | Sans / display             | Type change                           | Controls sm/md | Material (light, dark) |
 | --------- | ------------ | -------------------------- | ------------------------------------- | -------------- | ---------------------- |
-| house     | 4 / 8        | system / system            | none                                  | 28 / 36        | solid                  |
 | glass     | 999 / 16     | Apple system stack         | none                                  | 28 / 36        | blur 24px, alpha 0.72  |
 | editorial | 0 / 0        | system / Fraunces          | xl 40/48, 2xl 64/72, tracking -0.03em | 28 / 36        | solid                  |
 | stay      | 999 / 12     | Plus Jakarta Sans          | none                                  | 28 / 36        | solid                  |
@@ -60,7 +59,7 @@ Each open family is named as `"<Family> Variable"` first (the name Fontsource va
 
 New variables on every block: `--font-display`, `--tracking-display`, `--surface-alpha`, `--surface-backdrop`, `--control-height-sm`, `--control-height-md`. Focus ring width becomes per preset through the existing `--focus-ring-width`.
 
-`theme.css` (house only, unchanged selectors): `:root` adds the house defaults above.
+`theme.css` (glass, no `data-preset` selectors): `:root` is glass light, including its frosted material. `data-theme` and the operating system media rules carry the other glass appearances. High contrast is solid.
 
 `presets.css`, in this order:
 
@@ -82,15 +81,15 @@ New variables on every block: `--font-display`, `--tracking-display`, `--surface
 | --------------------- | ----------------------------------------------- | ----------------------------------------------------------------------------------------- |
 | Render any component  | color roles                                     | `presetColorRoles[preset][appearance]` emitted as CSS variables                           |
 | Render any component  | radius, type scale, control heights, focus ring | `presetMetrics[preset]`                                                                   |
-| Choose the preset     | the active preset                               | `data-preset` on `html` (app or catalog switcher); absent means house                     |
+| Choose the preset     | the active preset                               | `data-preset` on `html` (app or catalog switcher); absent means glass                     |
 | Choose the appearance | light, dark, high contrast                      | `data-theme` on `html` or an element; absent means the OS settings                        |
 | Frosted surface       | blur and opacity                                | `presetMetrics[preset].material`, forced solid for high contrast and reduced transparency |
 | Show a real font      | the font file                                   | the app or catalog imports the Fontsource package; tokens name the family only            |
-| Native screen         | any value                                       | `presets[name][appearance]` or `themes` (house)                                           |
+| Native screen         | any value                                       | `presets[name][appearance]` or `themes` (glass)                                           |
 
 **Key invariants**:
 
-- House values never change as a side effect of a preset.
+- Glass is what a page gets when no preset is set. There is no house preset.
 - Components read only variables; no component branches on preset.
 - Contrast is measured on the solid hex, never through blur.
 
@@ -101,7 +100,7 @@ New variables on every block: `--font-display`, `--tracking-display`, `--surface
 - `theme.css` drift test and a check that it has no `data-preset` selector, verifies **AC-1**.
 - Selector order assertions in the emitted `presets.css` (preset blocks, media rules, house pairs, reduced transparency last), verifies **AC-2**, **AC-3**, **AC-4**, **AC-5**, **AC-7**.
 - Contrast matrix over `presetNames` by `themeNames`, plus 7:1 for access, verifies **AC-6**.
-- Token object: `themes` equals `presets.house`, JSON round trip, high contrast material solid, verifies **AC-9**.
+- Token object: `themes` equals `presets.glass`, JSON round trip, high contrast material solid, verifies **AC-9**.
 - Catalog: identical markup per preset, verifies **AC-8**, **AC-10**.
 - `npm run check:budget` and `npm run check:colors`, verifies **AC-11**, **AC-12**.
 

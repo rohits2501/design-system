@@ -37,7 +37,9 @@ Also ruled out: adopting shadcn/ui, MUI, or Base UI as the styling layer (the pa
 
 ## Rationale
 
-The forces are coherence and safety for existing apps. Option 2 keeps the single TypeScript source and the single component API, and it is the only option where the three consuming apps see zero change. Option 3 is a reasonable later split if an app ever ships with a single preset and measures the cost; the emitter can produce it from the same model.
+The forces are coherence and one component API. Option 2 keeps the single TypeScript source. Option 3 is a reasonable later split if an app ever ships with a single preset and measures the cost; the emitter can produce it from the same model.
+
+Glass replaces house as the default. `theme.css`, `colors`, and `themes` are glass. Editorial, stay, cinema, and access stay in `presets.css`. Apps already on the 0.1.1 tarball keep the old look until they take a new pack. A change in this repo does not update those apps on its own.
 
 Presets are original values checked against the same contrast math, not brand copies. Accents sit near the inspiration in spirit and differ in hex. The `access` preset was added at the engineer's request as the plain, large type look of public service sites, and it is the only preset that changes control height and type scale, which is why those became tokens.
 
