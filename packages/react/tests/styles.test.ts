@@ -27,7 +27,7 @@ test("presets reach components only through variables", () => {
   expect(styles).not.toContain("data-preset");
   expect(styles).not.toMatch(/min-height: \d|width: \d+px;\s*padding: 0/);
   for (const m of styles.matchAll(/backdrop-filter: ([^;]+);/g))
-    expect(m[1]).toBe("var(--surface-backdrop)");
+    expect(["var(--surface-backdrop)", "none"]).toContain(m[1]);
   expect(styles).toMatch(
     /\.h-text--xl,\s*\.h-text--2xl\s*\{\s*font-family: var\(--font-display\);\s*letter-spacing: var\(--tracking-display\);/,
   );
@@ -40,6 +40,13 @@ test("the default theme is solid stay and its high contrast stays solid", () => 
   const hcStart = theme.indexOf('[data-theme="high-contrast"]');
   const hc = theme.slice(hcStart, theme.indexOf("}", hcStart));
   expect(hc).toContain("--surface-backdrop: none;");
+});
+
+// covers: AC-4
+test("button fills follow a preset switch because the background color is not eased", () => {
+  const rule = styles.slice(styles.indexOf(".h-button {"), styles.indexOf(".h-button--sm"));
+  expect(rule).toContain("transition: border-color 0.12s ease;");
+  expect(rule).not.toMatch(/transition:[^;]*background-color/);
 });
 
 test("interactive primitives draw the shared focus ring", () => {

@@ -6,9 +6,9 @@
 
 ## Key files
 
-| File | Owns |
-|---|---|
-| `src/index.ts` | Public components |
+| File             | Owns                              |
+| ---------------- | --------------------------------- |
+| `src/index.ts`   | Public components                 |
 | `src/styles.css` | Control styles on token variables |
 
 ## Commands
