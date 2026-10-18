@@ -1,0 +1,359 @@
+/* @house/react. Reads only @house/tokens variables. Import after @house/tokens/theme.css. */
+
+.h-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Button */
+
+.h-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font-family: inherit;
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition:
+    background-color 0.12s ease,
+    border-color 0.12s ease;
+}
+.h-button--sm {
+  min-height: 28px;
+  padding: 0 var(--space-2);
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-xs);
+}
+.h-button--md {
+  min-height: 36px;
+  padding: 0 var(--space-4);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-sm);
+}
+.h-button:hover:not(:disabled) {
+  border-color: var(--accent);
+}
+.h-button[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: var(--accent-subtle);
+}
+.h-button--primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-contrast);
+}
+.h-button--primary:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--accent) 88%, var(--text));
+}
+.h-button--danger {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+.h-button--danger:hover:not(:disabled) {
+  border-color: var(--danger);
+  background: var(--danger-subtle);
+}
+.h-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.h-icon-button.h-button--sm {
+  width: 28px;
+  padding: 0;
+}
+.h-icon-button.h-button--md {
+  width: 36px;
+  padding: 0;
+}
+.h-icon {
+  display: inline-flex;
+  line-height: 1;
+}
+
+/* Focus: one ring for every interactive primitive. */
+
+.h-button:focus-visible,
+.h-input:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* Text */
+
+.h-text {
+  margin: 0;
+  font-family: inherit;
+}
+.h-text--xs {
+  font-size: var(--font-size-xs);
+  line-height: var(--line-height-xs);
+}
+.h-text--sm {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-sm);
+}
+.h-text--md {
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-md);
+}
+.h-text--lg {
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-lg);
+}
+.h-text--xl {
+  font-size: var(--font-size-xl);
+  line-height: var(--line-height-xl);
+}
+.h-text--2xl {
+  font-size: var(--font-size-2xl);
+  line-height: var(--line-height-2xl);
+}
+.h-text--default {
+  color: var(--text);
+}
+.h-text--muted {
+  color: var(--text-muted);
+}
+.h-text--accent {
+  color: var(--accent);
+}
+.h-text--regular {
+  font-weight: var(--font-weight-regular);
+}
+.h-text--medium {
+  font-weight: var(--font-weight-medium);
+}
+.h-text--bold {
+  font-weight: var(--font-weight-bold);
+}
+.h-text--mono {
+  font-family: var(--font-mono);
+}
+.h-text--status {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-1);
+}
+.h-text--success,
+.h-surface--success {
+  --h-status: var(--success);
+  --h-status-subtle: var(--success-subtle);
+}
+.h-text--warning,
+.h-surface--warning {
+  --h-status: var(--warning);
+  --h-status-subtle: var(--warning-subtle);
+}
+.h-text--danger,
+.h-surface--danger {
+  --h-status: var(--danger);
+  --h-status-subtle: var(--danger-subtle);
+}
+.h-text--info,
+.h-surface--info {
+  --h-status: var(--info);
+  --h-status-subtle: var(--info-subtle);
+}
+.h-text--status {
+  color: var(--h-status);
+}
+.h-status-glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 1.25em;
+  height: 1.25em;
+  border: 1px solid currentColor;
+  border-radius: var(--radius-pill);
+  font-size: 0.75em;
+  font-weight: var(--font-weight-bold);
+  line-height: 1;
+}
+
+/* Stack */
+
+.h-stack {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.h-stack--column {
+  flex-direction: column;
+}
+.h-stack--row {
+  flex-direction: row;
+}
+.h-stack--wrap {
+  flex-wrap: wrap;
+}
+.h-align-start {
+  align-items: flex-start;
+}
+.h-align-center {
+  align-items: center;
+}
+.h-align-end {
+  align-items: flex-end;
+}
+.h-align-stretch {
+  align-items: stretch;
+}
+.h-align-baseline {
+  align-items: baseline;
+}
+.h-justify-start {
+  justify-content: flex-start;
+}
+.h-justify-center {
+  justify-content: center;
+}
+.h-justify-end {
+  justify-content: flex-end;
+}
+.h-justify-between {
+  justify-content: space-between;
+}
+.h-gap-0 {
+  gap: var(--space-0);
+}
+.h-gap-1 {
+  gap: var(--space-1);
+}
+.h-gap-2 {
+  gap: var(--space-2);
+}
+.h-gap-3 {
+  gap: var(--space-3);
+}
+.h-gap-4 {
+  gap: var(--space-4);
+}
+.h-gap-5 {
+  gap: var(--space-5);
+}
+.h-gap-6 {
+  gap: var(--space-6);
+}
+.h-gap-8 {
+  gap: var(--space-8);
+}
+.h-gap-10 {
+  gap: var(--space-10);
+}
+.h-gap-12 {
+  gap: var(--space-12);
+}
+
+/* Surface */
+
+.h-surface {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text);
+}
+.h-surface--default {
+  background: var(--surface);
+}
+.h-surface--subtle {
+  background: var(--bg-subtle);
+}
+.h-surface--raised {
+  background: var(--surface-raised);
+  box-shadow:
+    0 1px 2px color-mix(in srgb, var(--text) 8%, transparent),
+    0 8px 24px color-mix(in srgb, var(--text) 10%, transparent);
+}
+.h-surface--status {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  background: var(--h-status-subtle);
+  border-color: var(--h-status);
+  border-left-width: 4px;
+}
+.h-surface--status > .h-status-glyph {
+  margin-top: 0.15em;
+  color: var(--h-status);
+}
+.h-surface__body {
+  flex: 1;
+  min-width: 0;
+}
+.h-pad-0 {
+  padding: var(--space-0);
+}
+.h-pad-1 {
+  padding: var(--space-1);
+}
+.h-pad-2 {
+  padding: var(--space-2);
+}
+.h-pad-3 {
+  padding: var(--space-3);
+}
+.h-pad-4 {
+  padding: var(--space-4);
+}
+.h-pad-5 {
+  padding: var(--space-5);
+}
+.h-pad-6 {
+  padding: var(--space-6);
+}
+.h-pad-8 {
+  padding: var(--space-8);
+}
+.h-pad-10 {
+  padding: var(--space-10);
+}
+.h-pad-12 {
+  padding: var(--space-12);
+}
+
+/* Field */
+
+.h-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.h-field__label {
+  color: var(--text);
+}
+.h-input {
+  min-height: 36px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+}
+.h-input::placeholder {
+  color: var(--text-muted);
+}
+.h-input[aria-invalid="true"] {
+  border-color: var(--danger);
+}
+.h-field--disabled {
+  opacity: 0.6;
+}
+.h-input:disabled {
+  cursor: not-allowed;
+}

@@ -4,11 +4,11 @@ _Steps derived from spec 0001. This decision spec has no acceptance criteria, so
 
 ## Commands
 
-- [ ] `npx vp install` from the repo root, with Node 22.18 or newer on PATH → dependencies install and the command exits 0
-- [ ] `npx vp check` → format and lint pass
-- [ ] `npx vp -C apps/catalog build` → the catalog writes `apps/catalog/dist/`
-- [ ] `npx vp -C packages/tokens pack` → `packages/tokens/dist/index.mjs` and `packages/tokens/dist/index.d.mts` exist, and `package.json` exports map `.`, `./tokens`, and `./theme.css`
-- [ ] Import `packages/tokens/dist/index.mjs` → `tokens.theme` is `placeholder`, and `packages/tokens/src/theme.css` contains `:root`
+- [x] `npx vp install` from the repo root, with Node 22.18 or newer on PATH → dependencies install and the command exits 0
+- [x] `npx vp check` → format and lint pass
+- [x] `npx vp -C apps/catalog build` → the catalog writes `apps/catalog/dist/`
+- [x] `npx vp -C packages/tokens pack` → `packages/tokens/dist/index.mjs` and `packages/tokens/dist/index.d.mts` exist, and `package.json` exports map `.`, `./tokens`, and `./theme.css`
+- [x] Import `packages/tokens/dist/index.mjs` → `tokens.theme` is `placeholder`, and `packages/tokens/src/theme.css` contains `:root`
 
 ## Acceptance criteria coverage
 

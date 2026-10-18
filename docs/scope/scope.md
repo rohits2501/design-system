@@ -29,7 +29,7 @@ Choose how the library is built and how a later app installs it, then scaffold a
 
 - [x] Decide the stack (spec): `/architect stack and architecture`
 - [x] Scaffold from the decision: `/develop stack and architecture`
-- [ ] Verify it: `/check verify stack and architecture`
+- [x] Verify it: `/check verify stack and architecture`
 - [ ] Test it: `/test stack and architecture`
 
 Spec [0001](../specs/0001-stack-and-architecture/index.md)
