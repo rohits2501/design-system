@@ -1,4 +1,5 @@
 import { palette as p } from "./palette.ts";
+import { presetColors } from "./preset-colors.ts";
 
 /** Semantic color roles. The only color API product code may use. */
 export interface ColorRoles {
@@ -108,6 +109,9 @@ const highContrast: ColorRoles = {
 
 export const colors: Record<ThemeName, ColorRoles> = { light, dark, highContrast };
 
+export const presetNames = ["house", "glass", "editorial", "stay", "cinema", "access"] as const;
+export type PresetName = (typeof presetNames)[number];
+
 /** Spacing on a 4px grid, in pixels. */
 export const space = {
   0: 0,
@@ -156,23 +160,165 @@ export const focusRing = {
   offset: 2,
 } as const;
 
+export type FontSizeStep = keyof typeof fontSize;
+export type FontScale = Record<FontSizeStep, { size: number; lineHeight: number }>;
+
+/** Everything a preset sets besides color. Space and font weight are shared by every preset. */
+export interface PresetMetrics {
+  radius: { sm: number; md: number; pill: number };
+  fontSize: FontScale;
+  fontFamily: { sans: string; display: string; mono: string };
+  /** Letter spacing for the xl and 2xl display sizes, in em. */
+  trackingDisplay: number;
+  /** Minimum heights of the small and medium controls, in pixels. */
+  controlHeight: { sm: number; md: number };
+  focusRing: { width: number; offset: number };
+  /**
+   * Frosted surfaces on the web: backdrop blur in pixels and surface opacity. High contrast and
+   * reduced transparency are always solid. Native screens ignore this.
+   */
+  material: { blur: number; alpha: number };
+}
+
+const solid = { blur: 0, alpha: 1 } as const;
+
+function stack(first: string[]): string {
+  return [...first, 'ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif'].join(", ");
+}
+
+const houseMetrics: PresetMetrics = {
+  radius,
+  fontSize,
+  fontFamily: { sans: fontFamily.sans, display: fontFamily.sans, mono: fontFamily.mono },
+  trackingDisplay: 0,
+  controlHeight: { sm: 28, md: 36 },
+  focusRing,
+  material: solid,
+};
+
+/**
+ * Fontsource's variable packages register "<Family> Variable", so each stack names that first,
+ * then the static family an app may self-host, then the system.
+ */
+export const presetMetrics: Record<PresetName, PresetMetrics> = {
+  house: houseMetrics,
+  glass: {
+    ...houseMetrics,
+    radius: { sm: 999, md: 16, pill: 999 },
+    fontFamily: {
+      sans: '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
+      display: '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
+      mono: fontFamily.mono,
+    },
+    material: { blur: 24, alpha: 0.72 },
+  },
+  editorial: {
+    ...houseMetrics,
+    radius: { sm: 0, md: 0, pill: 999 },
+    fontSize: {
+      ...fontSize,
+      xl: { size: 40, lineHeight: 48 },
+      "2xl": { size: 64, lineHeight: 72 },
+    },
+    fontFamily: {
+      sans: fontFamily.sans,
+      display:
+        '"Fraunces Variable", "Fraunces", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif',
+      mono: fontFamily.mono,
+    },
+    trackingDisplay: -0.03,
+  },
+  stay: {
+    ...houseMetrics,
+    radius: { sm: 999, md: 12, pill: 999 },
+    fontFamily: {
+      sans: stack(['"Plus Jakarta Sans Variable"', '"Plus Jakarta Sans"']),
+      display: stack(['"Plus Jakarta Sans Variable"', '"Plus Jakarta Sans"']),
+      mono: fontFamily.mono,
+    },
+  },
+  cinema: {
+    ...houseMetrics,
+    radius: { sm: 2, md: 4, pill: 999 },
+    fontFamily: {
+      sans: stack(['"Inter Tight Variable"', '"Inter Tight"', "Inter"]),
+      display: stack(['"Inter Tight Variable"', '"Inter Tight"', "Inter"]),
+      mono: fontFamily.mono,
+    },
+    trackingDisplay: -0.02,
+  },
+  access: {
+    ...houseMetrics,
+    radius: { sm: 4, md: 4, pill: 999 },
+    fontSize: {
+      xs: { size: 14, lineHeight: 20 },
+      sm: { size: 16, lineHeight: 24 },
+      md: { size: 18, lineHeight: 28 },
+      lg: { size: 20, lineHeight: 28 },
+      xl: { size: 28, lineHeight: 36 },
+      "2xl": { size: 36, lineHeight: 44 },
+    },
+    fontFamily: {
+      sans: stack(['"Atkinson Hyperlegible Next Variable"', '"Atkinson Hyperlegible Next"']),
+      display: stack(['"Atkinson Hyperlegible Next Variable"', '"Atkinson Hyperlegible Next"']),
+      mono: fontFamily.mono,
+    },
+    controlHeight: { sm: 36, md: 44 },
+    focusRing: { width: 3, offset: 2 },
+  },
+};
+
+/** Color roles for every preset and appearance. `house` is the default palette above. */
+export const presetColorRoles: Record<PresetName, Record<ThemeName, ColorRoles>> = {
+  house: colors,
+  ...presetColors,
+};
+
 export interface Theme {
   name: ThemeName;
+  preset: PresetName;
   color: ColorRoles;
   space: typeof space;
-  radius: typeof radius;
-  fontSize: typeof fontSize;
+  radius: PresetMetrics["radius"];
+  fontSize: FontScale;
   fontWeight: typeof fontWeight;
-  focusRing: typeof focusRing;
+  fontFamily: PresetMetrics["fontFamily"];
+  trackingDisplay: number;
+  controlHeight: PresetMetrics["controlHeight"];
+  focusRing: PresetMetrics["focusRing"];
+  material: PresetMetrics["material"];
 }
 
-function theme(name: ThemeName): Theme {
-  return { name, color: colors[name], space, radius, fontSize, fontWeight, focusRing };
+function theme(preset: PresetName, name: ThemeName): Theme {
+  const m = presetMetrics[preset];
+  return {
+    name,
+    preset,
+    color: presetColorRoles[preset][name],
+    space,
+    radius: m.radius,
+    fontSize: m.fontSize,
+    fontWeight,
+    fontFamily: m.fontFamily,
+    trackingDisplay: m.trackingDisplay,
+    controlHeight: m.controlHeight,
+    focusRing: m.focusRing,
+    material: name === "highContrast" ? solid : m.material,
+  };
 }
 
-/** Plain values for React Native `StyleSheet` and other non CSS consumers. */
-export const themes: Record<ThemeName, Theme> = {
-  light: theme("light"),
-  dark: theme("dark"),
-  highContrast: theme("highContrast"),
-};
+function appearances(preset: PresetName): Record<ThemeName, Theme> {
+  return {
+    light: theme(preset, "light"),
+    dark: theme(preset, "dark"),
+    highContrast: theme(preset, "highContrast"),
+  };
+}
+
+/** Plain values for React Native `StyleSheet` and other non CSS consumers. This is `house`. */
+export const themes: Record<ThemeName, Theme> = appearances("house");
+
+/** Every preset in every appearance, e.g. `presets.glass.dark.color.accent`. */
+export const presets = Object.fromEntries(
+  presetNames.map((name) => [name, appearances(name)]),
+) as Record<PresetName, Record<ThemeName, Theme>>;
