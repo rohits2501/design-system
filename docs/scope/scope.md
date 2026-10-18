@@ -22,6 +22,7 @@ _These are recommendations to keep your build orderly, not requirements. Skip an
 | 9   | Document console adoption    | Adoption   | in-progress |
 | 10  | AudioForge adoption          | Adoption   | in-progress |
 | 11  | Bol dictation screen         | Adoption   | in-progress |
+| 12  | Theme presets                | Slice 5    | in-progress |
 
 ## Foundations
 
@@ -116,6 +117,17 @@ A small set of before and after samples (a raw hex, a utility palette class, a r
 - [x] Test it: every fixture mapped or retired
 
 code in `packages/migration/`
+
+## Slice 5: Theme presets
+
+### 12. Theme presets · in-progress · needs a decision
+
+A second axis beside light, dark, and high contrast: five original looks (glass, editorial, stay, cinema, access) on the same roles and the same components. Apps opt in; house stays the default and existing apps do not change.
+**Done when:** every preset passes the contrast bars in every appearance (access at 7:1 everywhere), apps that import only `theme.css` see no change, and the catalog shows every preset without a component change.
+
+- [ ] Design it (spec): `/architect theme presets`
+
+code in `packages/tokens/src/themes.ts`, `packages/tokens/src/preset-colors.ts` (preset model built ahead of the spec)
 
 ## Adoptions
 
