@@ -132,8 +132,8 @@ A second axis beside light, dark, and high contrast. Glass is the default look i
   - [x] Components read the new variables (AC-7, AC-8)
   - [x] Catalog preset switcher and fonts (AC-8, AC-10)
   - [x] Budgets, docs, and version 0.2.0 (AC-11, AC-12)
-- [ ] Verify it: `/check verify theme presets`
-- [ ] Test it: `/test theme presets`
+- [x] Verify it: `/check verify theme presets`
+- [x] Test it: `/test theme presets`
 
 spec [0002](../specs/0002-theme-presets/index.md) · code in `packages/tokens/src/`, `packages/react/src/styles.css`, `apps/catalog/`
 

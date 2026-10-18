@@ -24,6 +24,7 @@ const uiMinimum = 3;
 
 const cases = presetNames.flatMap((preset) => themeNames.map((name) => [preset, name] as const));
 
+// covers: AC-6
 describe.each(cases)("%s preset, %s theme", (preset, name) => {
   const c = presetColorRoles[preset][name];
   const min = textMinimum(preset, name);

@@ -22,6 +22,7 @@ test("every space step has a gap and a padding class", () => {
   }
 });
 
+// covers: AC-8
 test("presets reach components only through variables", () => {
   expect(styles).not.toContain("data-preset");
   expect(styles).not.toMatch(/min-height: \d|width: \d+px;\s*padding: 0/);

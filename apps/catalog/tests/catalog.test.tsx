@@ -3,6 +3,14 @@ import { presetNames } from "@house/tokens";
 import { expect, test } from "vite-plus/test";
 import { App } from "../src/App.tsx";
 
+function presetNav(markup: string): string {
+  return markup.slice(markup.indexOf('aria-label="Preset"'), markup.indexOf('aria-label="Theme"'));
+}
+
+function buttonLabels(nav: string): string[] {
+  return [...nav.matchAll(/>([^<]+)<\/button>/g)].map((match) => match[1] ?? "");
+}
+
 test("light, dark, and high contrast render the same primitives with no component change", () => {
   const html = renderToStaticMarkup(<App />);
   const columns = [
@@ -20,12 +28,50 @@ test("light, dark, and high contrast render the same primitives with no componen
   expect(hc).toBe(light);
 });
 
+// covers: AC-8, AC-10
 test.each(presetNames)("the %s preset renders the same gallery markup as the default", (preset) => {
   const gallery = (html: string) =>
     html.slice(html.indexOf('<div class="catalog-columns">')).replace(/_R_[a-z0-9]+_/gi, "id");
   expect(gallery(renderToStaticMarkup(<App initialPreset={preset} />))).toBe(
     gallery(renderToStaticMarkup(<App />)),
   );
+});
+
+// covers: AC-5, AC-10
+test("the preset switcher names the five looks and presses glass by default", () => {
+  const nav = presetNav(renderToStaticMarkup(<App />));
+  expect(buttonLabels(nav)).toEqual(["Glass", "Editorial", "Stay", "Cinema", "Access"]);
+  expect(nav).not.toContain("House");
+  expect(nav).toMatch(/aria-pressed="true"[^>]*>Glass</);
+});
+
+// covers: AC-10
+test("starting on editorial presses that look and not glass", () => {
+  const nav = presetNav(renderToStaticMarkup(<App initialPreset="editorial" />));
+  expect(nav).toMatch(/aria-pressed="true"[^>]*>Editorial</);
+  expect(nav).not.toMatch(/aria-pressed="true"[^>]*>Glass</);
+});
+
+// covers: AC-10
+test("a single appearance shows the gallery once", () => {
+  const count = (markup: string) => markup.split("Invoice 2041").length - 1;
+  expect(count(renderToStaticMarkup(<App />))).toBe(3);
+  const dark = renderToStaticMarkup(<App initialView="dark" />);
+  expect(count(dark)).toBe(1);
+  expect(dark).toMatch(/aria-pressed="true"[^>]*>Dark</);
+});
+
+// covers: AC-10
+test("icon buttons have names and a field error is written out", () => {
+  const markup = renderToStaticMarkup(<App />);
+  for (const name of ["Previous page", "Next page", "Close"]) {
+    expect(markup).toContain(`aria-label="${name}"`);
+  }
+  expect(markup).toContain("Vendor name");
+  expect(markup).toContain("Invoice total");
+  expect(markup).toContain("Use a full stop for decimals.");
+  expect(markup).toContain('aria-invalid="true"');
+  expect(markup).toContain(">Disabled<");
 });
 
 test("the preset switcher offers every preset and marks the active one", () => {
