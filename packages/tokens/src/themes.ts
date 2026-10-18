@@ -40,7 +40,7 @@ export const themeAttribute: Record<ThemeName, string> = {
 /** The default palette. Stay, in light, dark, and high contrast. */
 export const colors: Record<ThemeName, ColorRoles> = presetColors.stay;
 
-export const presetNames = ["stay", "editorial", "cinema", "access"] as const;
+export const presetNames = ["stay", "glass", "editorial", "cinema", "access"] as const;
 export type PresetName = (typeof presetNames)[number];
 
 /** Spacing on a 4px grid, in pixels. */
@@ -105,13 +105,13 @@ export interface PresetMetrics {
   controlHeight: { sm: number; md: number };
   focusRing: { width: number; offset: number };
   /**
-   * Frosted surfaces on the web: backdrop blur in pixels and surface opacity. High contrast and
-   * reduced transparency are always solid. Native screens ignore this.
+   * Frosted surfaces on the web: backdrop blur in pixels, surface opacity, and backdrop
+   * saturation. High contrast and reduced transparency are always solid. Native screens ignore this.
    */
-  material: { blur: number; alpha: number };
+  material: { blur: number; alpha: number; saturate: number };
 }
 
-const solid = { blur: 0, alpha: 1 } as const;
+const solid = { blur: 0, alpha: 1, saturate: 1 } as const;
 
 function stack(first: string[]): string {
   return [...first, 'ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif'].join(", ");
@@ -157,6 +157,17 @@ export const presetMetrics: Record<PresetName, PresetMetrics> = {
       display: stack(['"Plus Jakarta Sans Variable"', '"Plus Jakarta Sans"']),
       mono: fontFamily.mono,
     },
+  },
+  glass: {
+    ...baseMetrics,
+    radius: { sm: 999, md: 22, pill: 999 },
+    fontFamily: {
+      sans: '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
+      display: '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
+      mono: fontFamily.mono,
+    },
+    controlHeight: { sm: 28, md: 44 },
+    material: { blur: 20, alpha: 0.62, saturate: 1.8 },
   },
   cinema: {
     ...baseMetrics,

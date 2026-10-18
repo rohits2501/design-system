@@ -52,13 +52,15 @@ function colorDeclarations(preset: PresetName, name: ThemeName): Declarations {
 }
 
 function materialDeclarations(material: PresetMetrics["material"]): Declarations {
+  const backdrop =
+    material.blur > 0 ? `blur(${material.blur}px) saturate(${material.saturate})` : "none";
   return new Map([
     ["--surface-alpha", String(material.alpha)],
-    ["--surface-backdrop", material.blur > 0 ? `blur(${material.blur}px)` : "none"],
+    ["--surface-backdrop", backdrop],
   ]);
 }
 
-const solid = { blur: 0, alpha: 1 };
+const solid = { blur: 0, alpha: 1, saturate: 1 };
 
 /** Everything a preset sets besides color and material. */
 function metricDeclarations(m: PresetMetrics): Declarations {

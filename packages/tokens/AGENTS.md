@@ -2,17 +2,17 @@
 
 ## Overview
 
-`@house/tokens` is the shared visual language. The web gets CSS variables. A native screen gets a plain token object. Stay is the default look. Editorial, cinema, and access are opt in.
+`@house/tokens` is the shared visual language. The web gets CSS variables. A native screen gets a plain token object. Stay is the default look. Glass, editorial, cinema, and access are opt in. Glass frosts light and dark.
 
 ## Key files
 
-| File | Owns |
-|---|---|
-| `src/themes.ts` | Theme object and preset metrics |
-| `src/preset-colors.ts` | Locked colors |
-| `src/theme.css` | Stay, the look with no `data-preset` |
-| `src/presets.css` | Editorial, cinema, and access |
-| `src/css.ts` | Emits both CSS files |
+| File                   | Owns                                 |
+| ---------------------- | ------------------------------------ |
+| `src/themes.ts`        | Theme object and preset metrics      |
+| `src/preset-colors.ts` | Locked colors                        |
+| `src/theme.css`        | Stay, the look with no `data-preset` |
+| `src/presets.css`      | Editorial, cinema, and access        |
+| `src/css.ts`           | Emits both CSS files                 |
 
 ## Commands
 
@@ -29,7 +29,7 @@ npm test -w @house/tokens
 ## Gotchas
 
 - `theme.css` and `presets.css` are generated. Commit them. CI fails when the emit drifts.
-- Clearing `data-preset` returns to stay. There is no glass preset.
+- Clearing `data-preset` returns to stay. Glass is opt in, and its high contrast block is solid.
 
 ## Related specs
 

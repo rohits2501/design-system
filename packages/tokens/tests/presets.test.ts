@@ -14,6 +14,8 @@ import {
 const presetsCss = readFileSync(new URL("../src/presets.css", import.meta.url), "utf8");
 const themeCss = readFileSync(new URL("../src/theme.css", import.meta.url), "utf8");
 const optIn = presetNames.filter((name) => name !== "stay");
+const solidOptIn = optIn.filter((name) => name !== "glass");
+const solid = { blur: 0, alpha: 1, saturate: 1 };
 
 /** The body of the first rule whose selector list starts with `selector`. */
 function rule(css: string, selector: string): string {
@@ -100,14 +102,30 @@ describe.each(optIn)("%s preset rules", (preset) => {
   });
 });
 
-test("stay lives only in theme.css, and glass is gone", () => {
+test("stay lives only in theme.css", () => {
   expect(presetsCss).not.toContain('data-preset="stay"');
-  expect(presetsCss).not.toContain('data-preset="glass"');
   expect(themeCss).not.toContain("data-preset");
-  expect(presetsCss).not.toContain("blur(");
 });
 
-describe.each(optIn)("%s overrides the stay default", (preset) => {
+test("glass is the only frosted preset", () => {
+  const body = rule(presetsCss, 'html[data-preset="glass"],');
+  expect(body).toContain(`--accent: ${presetColorRoles.glass.light.accent};`);
+  expect(body).toContain("--surface-alpha: 0.62;");
+  expect(body).toContain("--surface-backdrop: blur(20px) saturate(1.8);");
+  expect(body).toContain("--radius-md: 22px;");
+  expect(body).toContain("--control-height-md: 44px;");
+  expect(body).toContain("-apple-system");
+  const hc = rule(presetsCss, 'html[data-preset="glass"][data-theme="high-contrast"]');
+  expect(hc).toContain("--surface-alpha: 1;");
+  expect(hc).toContain("--surface-backdrop: none;");
+  expect(hc).toContain(`--accent: ${presetColorRoles.glass.highContrast.accent};`);
+  for (const name of solidOptIn) {
+    const look = rule(presetsCss, `html[data-preset="${name}"],`);
+    expect(look).toContain("--surface-backdrop: none;");
+  }
+});
+
+describe.each(solidOptIn)("%s overrides the stay default", (preset) => {
   const accent = presetColorRoles[preset];
 
   // covers: AC-2, AC-7
@@ -183,19 +201,21 @@ describe("token object", () => {
   });
 
   // covers: AC-9
-  test("colors and the preset list are stay, and glass is not a preset", () => {
+  test("colors are stay, and the preset list includes glass", () => {
     expect(colors).toEqual(presetColorRoles.stay);
-    expect([...presetNames]).toEqual(["stay", "editorial", "cinema", "access"]);
+    expect([...presetNames]).toEqual(["stay", "glass", "editorial", "cinema", "access"]);
     expect(Object.keys(presets)).toEqual([...presetNames]);
-    expect(presets).not.toHaveProperty("glass");
   });
 
   // covers: AC-7, AC-9
-  test("every look is solid, including stay light and dark", () => {
-    for (const name of presetNames) {
-      expect(presets[name].light.material).toEqual({ blur: 0, alpha: 1 });
-      expect(presets[name].dark.material).toEqual({ blur: 0, alpha: 1 });
+  test("stay and the other solid looks stay solid, and glass frosts light and dark", () => {
+    for (const name of ["stay", ...solidOptIn] as const) {
+      expect(presets[name].light.material).toEqual(solid);
+      expect(presets[name].dark.material).toEqual(solid);
     }
+    const frost = { blur: 20, alpha: 0.62, saturate: 1.8 };
+    expect(presets.glass.light.material).toEqual(frost);
+    expect(presets.glass.dark.material).toEqual(frost);
   });
 
   // covers: AC-9
@@ -210,6 +230,11 @@ describe("token object", () => {
         light: { accent: "#9d1239" },
         dark: { accent: "#ff8fa8" },
         highContrast: { accent: "#6e0c28" },
+      },
+      glass: {
+        light: { accent: "#0b4fbf" },
+        dark: { accent: "#8eb6ff" },
+        highContrast: { accent: "#003a8c" },
       },
       cinema: {
         light: { accent: "#a10d18" },
@@ -227,7 +252,7 @@ describe("token object", () => {
   test.each(presetNames)("%s is plain JSON with solid high contrast", (name) => {
     const set = presets[name];
     expect(JSON.parse(JSON.stringify(set))).toEqual(set);
-    expect(set.highContrast.material).toEqual({ blur: 0, alpha: 1 });
+    expect(set.highContrast.material).toEqual(solid);
     for (const t of themeNames) expect(set[t].preset).toBe(name);
   });
 
