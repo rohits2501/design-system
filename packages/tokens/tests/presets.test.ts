@@ -13,7 +13,7 @@ import {
 
 const presetsCss = readFileSync(new URL("../src/presets.css", import.meta.url), "utf8");
 const themeCss = readFileSync(new URL("../src/theme.css", import.meta.url), "utf8");
-const optIn = presetNames.filter((name) => name !== "glass");
+const optIn = presetNames.filter((name) => name !== "stay");
 
 /** The body of the first rule whose selector list starts with `selector`. */
 function rule(css: string, selector: string): string {
@@ -41,20 +41,31 @@ test("checked in presets.css matches the token source (run `npm run emit` to ref
   expect(presetsCss).toBe(renderPresetsCss());
 });
 
-describe("theme.css is the glass default", () => {
+describe("theme.css is the stay default", () => {
   test("no preset selectors", () => {
     expect(themeCss).not.toContain("data-preset");
   });
 
   // covers: AC-1
-  test("root carries glass", () => {
+  test("root carries stay", () => {
     const root = rule(themeCss, ":root {");
     expect(root).toContain("--radius-sm: 999px;");
-    expect(root).toContain("--font-display: -apple-system");
-    expect(root).toContain("--surface-alpha: 0.72;");
-    expect(root).toContain("--surface-backdrop: blur(24px);");
+    expect(root).toContain("--radius-md: 12px;");
+    expect(root).toContain('--font-sans: "Plus Jakarta Sans Variable"');
+    expect(root).toContain("--surface-alpha: 1;");
+    expect(root).toContain("--surface-backdrop: none;");
     expect(root).toContain("--control-height-sm: 28px;");
     expect(root).toContain("--control-height-md: 36px;");
+    expect(root).toContain(`--accent: ${presetColorRoles.stay.light.accent};`);
+  });
+
+  // covers: AC-1
+  test("dark and high contrast attributes keep the stay palette", () => {
+    const dark = rule(themeCss, '[data-theme="dark"] {');
+    expect(dark).toContain(`--accent: ${presetColorRoles.stay.dark.accent};`);
+    const hc = rule(themeCss, '[data-theme="high-contrast"] {');
+    expect(hc).toContain(`--accent: ${presetColorRoles.stay.highContrast.accent};`);
+    expect(hc).toContain("--surface-backdrop: none;");
   });
 
   test("high contrast on the default is solid", () => {
@@ -89,14 +100,14 @@ describe.each(optIn)("%s preset rules", (preset) => {
   });
 });
 
-test("glass lives only in theme.css, and house is gone", () => {
+test("stay lives only in theme.css, and glass is gone", () => {
+  expect(presetsCss).not.toContain('data-preset="stay"');
   expect(presetsCss).not.toContain('data-preset="glass"');
-  expect(presetsCss).not.toContain('data-preset="house"');
   expect(themeCss).not.toContain("data-preset");
   expect(presetsCss).not.toContain("blur(");
 });
 
-describe.each(optIn)("%s overrides the glass default", (preset) => {
+describe.each(optIn)("%s overrides the stay default", (preset) => {
   const accent = presetColorRoles[preset];
 
   // covers: AC-2, AC-7
@@ -131,20 +142,26 @@ describe.each(optIn)("%s overrides the glass default", (preset) => {
 // covers: AC-2
 test.each([
   ["editorial", "--radius-sm: 0px;"],
-  ["stay", "--radius-md: 12px;"],
   ["cinema", "--tracking-display: -0.02em;"],
   ["access", "--control-height-md: 44px;"],
-] as const)("%s emits the metric glass does not already set", (preset, snippet) => {
+] as const)("%s emits the metric stay does not already set", (preset, snippet) => {
   expect(rule(presetsCss, `html[data-preset="${preset}"],`)).toContain(snippet);
 });
 
+// covers: AC-2
+test("editorial replaces the stay font", () => {
+  const body = rule(presetsCss, 'html[data-preset="editorial"],');
+  expect(body).toContain("Fraunces Variable");
+  expect(body).not.toContain("Plus Jakarta Sans");
+});
+
 // covers: AC-3
-test("with neither attribute, system dark and more contrast stay on glass", () => {
+test("with neither attribute, system dark and more contrast use stay", () => {
   const dark = mediaFor(themeCss, "prefers-color-scheme: dark", ":root:not([data-theme])");
-  expect(dark).toContain(`--accent: ${presetColorRoles.glass.dark.accent};`);
-  expect(dark).toContain("--surface-backdrop: blur(24px);");
+  expect(dark).toContain(`--accent: ${presetColorRoles.stay.dark.accent};`);
+  expect(dark).toContain("--surface-backdrop: none;");
   const hc = mediaFor(themeCss, "prefers-contrast: more", ":root:not([data-theme])");
-  expect(hc).toContain(`--accent: ${presetColorRoles.glass.highContrast.accent};`);
+  expect(hc).toContain(`--accent: ${presetColorRoles.stay.highContrast.accent};`);
   expect(hc).toContain("--surface-backdrop: none;");
 });
 
@@ -161,23 +178,21 @@ test("presets.css names no font file or font CDN", () => {
 
 describe("token object", () => {
   // covers: AC-9
-  test("themes is the glass default", () => {
-    expect(themes).toEqual(presets.glass);
+  test("themes is the stay default", () => {
+    expect(themes).toEqual(presets.stay);
   });
 
   // covers: AC-9
-  test("colors and the preset list are glass, and house is not a preset", () => {
-    expect(colors).toEqual(presetColorRoles.glass);
-    expect([...presetNames]).toEqual(["glass", "editorial", "stay", "cinema", "access"]);
+  test("colors and the preset list are stay, and glass is not a preset", () => {
+    expect(colors).toEqual(presetColorRoles.stay);
+    expect([...presetNames]).toEqual(["stay", "editorial", "cinema", "access"]);
     expect(Object.keys(presets)).toEqual([...presetNames]);
-    expect(presets).not.toHaveProperty("house");
+    expect(presets).not.toHaveProperty("glass");
   });
 
   // covers: AC-7, AC-9
-  test("only glass light and dark are frosted", () => {
-    expect(presets.glass.light.material).toEqual({ blur: 24, alpha: 0.72 });
-    expect(presets.glass.dark.material).toEqual({ blur: 24, alpha: 0.72 });
-    for (const name of optIn) {
+  test("every look is solid, including stay light and dark", () => {
+    for (const name of presetNames) {
       expect(presets[name].light.material).toEqual({ blur: 0, alpha: 1 });
       expect(presets[name].dark.material).toEqual({ blur: 0, alpha: 1 });
     }
@@ -186,11 +201,6 @@ describe("token object", () => {
   // covers: AC-9
   test("each look keeps its locked accent", () => {
     expect(presetColorRoles).toMatchObject({
-      glass: {
-        light: { accent: "#0b4fbf" },
-        dark: { accent: "#8eb6ff" },
-        highContrast: { accent: "#003a8c" },
-      },
       editorial: {
         light: { accent: "#7a2e0e" },
         dark: { accent: "#f0a06a" },

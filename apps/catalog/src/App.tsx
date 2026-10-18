@@ -25,16 +25,15 @@ const themeLabel: Record<ThemeName, string> = {
 };
 
 const presetLabel: Record<PresetName, string> = {
-  glass: "Glass",
-  editorial: "Editorial",
   stay: "Stay",
+  editorial: "Editorial",
   cinema: "Cinema",
   access: "Access",
 };
 
 export function App({
   initialView = "side-by-side",
-  initialPreset = "glass",
+  initialPreset = "stay",
 }: {
   initialView?: View;
   initialPreset?: PresetName;
@@ -44,7 +43,7 @@ export function App({
 
   useEffect(() => {
     const root = document.documentElement;
-    if (preset === "glass") root.removeAttribute("data-preset");
+    if (preset === "stay") root.removeAttribute("data-preset");
     else root.setAttribute("data-preset", preset);
   }, [preset]);
 

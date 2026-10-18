@@ -28,8 +28,8 @@ test("the token object is plain data a native StyleSheet can read", () => {
   const t = themes.dark;
   expect(t.color.bg).toMatch(/^#[0-9a-f]{6}$/);
   expect(t.space[4]).toBe(16);
-  expect(t.preset).toBe("glass");
-  expect(t.radius.md).toBe(16);
+  expect(t.preset).toBe("stay");
+  expect(t.radius.md).toBe(12);
   expect(JSON.parse(JSON.stringify(themes))).toEqual(themes);
 });
 

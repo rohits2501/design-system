@@ -37,10 +37,10 @@ export const themeAttribute: Record<ThemeName, string> = {
   highContrast: "high-contrast",
 };
 
-/** The default palette. Glass, in light, dark, and high contrast. */
-export const colors: Record<ThemeName, ColorRoles> = presetColors.glass;
+/** The default palette. Stay, in light, dark, and high contrast. */
+export const colors: Record<ThemeName, ColorRoles> = presetColors.stay;
 
-export const presetNames = ["glass", "editorial", "stay", "cinema", "access"] as const;
+export const presetNames = ["stay", "editorial", "cinema", "access"] as const;
 export type PresetName = (typeof presetNames)[number];
 
 /** Spacing on a 4px grid, in pixels. */
@@ -117,7 +117,7 @@ function stack(first: string[]): string {
   return [...first, 'ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif'].join(", ");
 }
 
-/** Shared metrics the other presets start from. Glass overrides radius, font, and material. */
+/** Shared metrics the other presets start from. Stay overrides radius and font. */
 const baseMetrics: PresetMetrics = {
   radius,
   fontSize,
@@ -133,16 +133,6 @@ const baseMetrics: PresetMetrics = {
  * then the static family an app may self-host, then the system.
  */
 export const presetMetrics: Record<PresetName, PresetMetrics> = {
-  glass: {
-    ...baseMetrics,
-    radius: { sm: 999, md: 16, pill: 999 },
-    fontFamily: {
-      sans: '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
-      display: '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
-      mono: fontFamily.mono,
-    },
-    material: { blur: 24, alpha: 0.72 },
-  },
   editorial: {
     ...baseMetrics,
     radius: { sm: 0, md: 0, pill: 999 },
@@ -199,7 +189,7 @@ export const presetMetrics: Record<PresetName, PresetMetrics> = {
   },
 };
 
-/** Color roles for every preset and appearance. `glass` is `colors`, the default. */
+/** Color roles for every preset and appearance. `stay` is `colors`, the default. */
 export const presetColorRoles: Record<PresetName, Record<ThemeName, ColorRoles>> = presetColors;
 
 export interface Theme {
@@ -243,10 +233,10 @@ function appearances(preset: PresetName): Record<ThemeName, Theme> {
   };
 }
 
-/** Plain values for React Native `StyleSheet` and other non CSS consumers. This is `glass`, the default preset. */
-export const themes: Record<ThemeName, Theme> = appearances("glass");
+/** Plain values for React Native `StyleSheet` and other non CSS consumers. This is `stay`, the default preset. */
+export const themes: Record<ThemeName, Theme> = appearances("stay");
 
-/** Every preset in every appearance, e.g. `presets.glass.dark.color.accent`. */
+/** Every preset in every appearance, e.g. `presets.stay.dark.color.accent`. */
 export const presets = Object.fromEntries(
   presetNames.map((name) => [name, appearances(name)]),
 ) as Record<PresetName, Record<ThemeName, Theme>>;

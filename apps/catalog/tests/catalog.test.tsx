@@ -38,18 +38,26 @@ test.each(presetNames)("the %s preset renders the same gallery markup as the def
 });
 
 // covers: AC-5, AC-10
-test("the preset switcher names the five looks and presses glass by default", () => {
+test("the preset switcher names the four looks and presses stay by default", () => {
   const nav = presetNav(renderToStaticMarkup(<App />));
-  expect(buttonLabels(nav)).toEqual(["Glass", "Editorial", "Stay", "Cinema", "Access"]);
-  expect(nav).not.toContain("House");
-  expect(nav).toMatch(/aria-pressed="true"[^>]*>Glass</);
+  expect(buttonLabels(nav)).toEqual(["Stay", "Editorial", "Cinema", "Access"]);
+  expect(nav).not.toContain("Glass");
+  expect(nav).toMatch(/aria-pressed="true"[^>]*>Stay</);
 });
 
 // covers: AC-10
-test("starting on editorial presses that look and not glass", () => {
+test("the theme switcher names the four views and presses side by side by default", () => {
+  const markup = renderToStaticMarkup(<App />);
+  const nav = markup.slice(markup.indexOf('aria-label="Theme"'), markup.indexOf("catalog-columns"));
+  expect(buttonLabels(nav)).toEqual(["Side by side", "Light", "Dark", "High contrast"]);
+  expect(nav).toMatch(/aria-pressed="true"[^>]*>Side by side</);
+});
+
+// covers: AC-10
+test("starting on editorial presses that look and not stay", () => {
   const nav = presetNav(renderToStaticMarkup(<App initialPreset="editorial" />));
   expect(nav).toMatch(/aria-pressed="true"[^>]*>Editorial</);
-  expect(nav).not.toMatch(/aria-pressed="true"[^>]*>Glass</);
+  expect(nav).not.toMatch(/aria-pressed="true"[^>]*>Stay</);
 });
 
 // covers: AC-10

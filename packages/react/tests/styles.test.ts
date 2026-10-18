@@ -33,9 +33,10 @@ test("presets reach components only through variables", () => {
   );
 });
 
-test("the default theme is frosted glass and its high contrast is solid", () => {
+test("the default theme is solid stay and its high contrast stays solid", () => {
   const root = theme.slice(theme.indexOf(":root {"), theme.indexOf("}"));
-  expect(root).toContain("--surface-backdrop: blur(24px);");
+  expect(root).toContain("--surface-backdrop: none;");
+  expect(root).toContain("--surface-alpha: 1;");
   const hcStart = theme.indexOf('[data-theme="high-contrast"]');
   const hc = theme.slice(hcStart, theme.indexOf("}", hcStart));
   expect(hc).toContain("--surface-backdrop: none;");

@@ -22,7 +22,7 @@ _These are recommendations to keep your build orderly, not requirements. Skip an
 | 9   | Document console adoption    | Adoption   | in-progress |
 | 10  | AudioForge adoption          | Adoption   | in-progress |
 | 11  | Bol dictation screen         | Adoption   | in-progress |
-| 12  | Theme presets                | Slice 5    | in-progress |
+| 12  | Theme presets                | Slice 5    | done        |
 
 ## Foundations
 
@@ -120,10 +120,10 @@ code in `packages/migration/`
 
 ## Slice 5: Theme presets
 
-### 12. Theme presets · in-progress
+### 12. Theme presets · done
 
-A second axis beside light, dark, and high contrast. Glass is the default look in `theme.css`, in the place house used to hold. Editorial, stay, cinema, and access are opt in through `presets.css`.
-**Done when:** every preset passes the contrast bars in every appearance (access at 7:1 everywhere), a page with no `data-preset` renders glass, and the catalog shows every preset without a component change.
+A second axis beside light, dark, and high contrast. Stay is the default look in `theme.css`. Editorial, cinema, and access are opt in through `presets.css`.
+**Done when:** every preset passes the contrast bars in every appearance (access at 7:1 everywhere), a page with no `data-preset` renders stay, and the catalog shows every preset without a component change.
 
 - [x] Design it (spec): `/architect theme presets`
 - [x] Build it: `/develop theme presets`

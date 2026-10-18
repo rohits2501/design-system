@@ -17,14 +17,14 @@ import "@house/react/styles.css";
 import { Button, Stack } from "@house/react";
 ```
 
-`theme.css` is the glass look: pill controls, a frosted surface, and the system font. Set `data-theme="dark"` or `data-theme="high-contrast"` on any wrapper to switch appearance. High contrast is solid. An app may override `--accent` and `--font-sans` on a wrapper. It does not add its own palette.
+`theme.css` is the stay look: pill controls, a solid surface, and Plus Jakarta Sans (the system font is the fallback until the face is installed). Set `data-theme="dark"` or `data-theme="high-contrast"` on any wrapper to switch appearance. High contrast is solid. An app may override `--accent` and `--font-sans` on a wrapper. It does not add its own palette.
 
 For another look, opt in and set `data-preset` on `html`:
 
 ```ts
 import "@house/tokens/theme.css";
 import "@house/tokens/presets.css";
-document.documentElement.dataset.preset = "editorial"; // editorial, stay, cinema, access
+document.documentElement.dataset.preset = "editorial"; // editorial, cinema, access
 ```
 
 `data-theme` still works inside a preset. Presets name their fonts but ship none; install the face you want (for example from Fontsource) or the system font is used. See [Presets](docs/architecture.md#presets) for what each one changes.
