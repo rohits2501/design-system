@@ -31,3 +31,8 @@ dist-ssr
 
 # AI agent worktrees
 .claude/worktrees/
+
+# misc
+.cursor/
+.cursor/worktrees/
+.agents/
