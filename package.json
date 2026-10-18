@@ -9,7 +9,8 @@
   "type": "module",
   "scripts": {
     "ready": "vp check && npm run check:colors && vp run -r test && vp run -r build && npm run check:budget",
-    "check:colors": "node scripts/check-raw-color.mjs --config raw-color.config.json"
+    "check:colors": "node scripts/check-raw-color.mjs --config raw-color.config.json",
+    "check:budget": "node scripts/check-budget.mjs"
   },
   "devDependencies": {
     "vite-plus": "1.3.0"

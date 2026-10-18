@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  ready:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Format and lint
+        run: npx vp check
+      - name: Raw color scan
+        run: npm run check:colors
+      - name: Tests (unit, contrast, mapping, catalog)
+        run: npx vp run -r test
+      - name: Pack libraries and build the catalog
+        run: npx vp run -r build
+      - name: Gzip budget
+        run: npm run check:budget

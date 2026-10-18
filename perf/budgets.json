@@ -1,0 +1,15 @@
+{
+  "$comment": "Gzip ceilings in bytes, about 10% over today's size. Raise maxBytes in the same change that grows an asset, and say why in the commit.",
+  "budgets": [
+    { "name": "catalog JS", "path": "apps/catalog/dist/assets/*.js", "maxBytes": 78000 },
+    { "name": "catalog CSS", "path": "apps/catalog/dist/assets/*.css", "maxBytes": 2600 },
+    { "name": "theme.css", "path": "packages/tokens/src/theme.css", "maxBytes": 1150 },
+    {
+      "name": "@house/react styles.css",
+      "path": "packages/react/src/styles.css",
+      "maxBytes": 1750
+    },
+    { "name": "@house/react JS", "path": "packages/react/dist/index.mjs", "maxBytes": 1650 },
+    { "name": "@house/tokens JS", "path": "packages/tokens/dist/index.mjs", "maxBytes": 3100 }
+  ]
+}
