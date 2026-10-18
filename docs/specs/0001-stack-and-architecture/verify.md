@@ -9,6 +9,7 @@ _Steps derived from spec 0001. This decision spec has no acceptance criteria, so
 - [x] `npx vp -C apps/catalog build` → the catalog writes `apps/catalog/dist/`
 - [x] `npx vp -C packages/tokens pack` → `packages/tokens/dist/index.mjs` and `packages/tokens/dist/index.d.mts` exist, and `package.json` exports map `.`, `./tokens`, and `./theme.css`
 - [x] Import `packages/tokens/dist/index.mjs` → `tokens.theme` is `placeholder`, and `packages/tokens/src/theme.css` contains `:root`
+  - Superseded: the placeholder became the real token object (`themes`, `colors`, `renderThemeCss`). `packages/tokens/tests/theme.test.ts` now covers this step.
 
 ## Acceptance criteria coverage
 
