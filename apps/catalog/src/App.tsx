@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import { Button, Stack, Text } from "@house/react";
-import { themeAttribute, themeNames, type ThemeName } from "@house/tokens";
+import {
+  presetNames,
+  themeAttribute,
+  themeNames,
+  type PresetName,
+  type ThemeName,
+} from "@house/tokens";
 import { Gallery } from "./Gallery.tsx";
 
 type View = "side-by-side" | ThemeName;
@@ -18,8 +24,30 @@ const themeLabel: Record<ThemeName, string> = {
   highContrast: "High contrast",
 };
 
-export function App({ initialView = "side-by-side" }: { initialView?: View }) {
+const presetLabel: Record<PresetName, string> = {
+  house: "House",
+  glass: "Glass",
+  editorial: "Editorial",
+  stay: "Stay",
+  cinema: "Cinema",
+  access: "Access",
+};
+
+export function App({
+  initialView = "side-by-side",
+  initialPreset = "house",
+}: {
+  initialView?: View;
+  initialPreset?: PresetName;
+}) {
   const [view, setView] = useState<View>(initialView);
+  const [preset, setPreset] = useState<PresetName>(initialPreset);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (preset === "house") root.removeAttribute("data-preset");
+    else root.setAttribute("data-preset", preset);
+  }, [preset]);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -35,8 +63,20 @@ export function App({ initialView = "side-by-side" }: { initialView?: View }) {
             House design system
           </Text>
           <Text as="p" size="sm" tone="muted">
-            One set of components. Themes are variable overrides on a wrapper.
+            One set of components. Presets and themes are variable overrides.
           </Text>
+        </Stack>
+        <Stack as="nav" direction="row" gap={2} wrap aria-label="Preset">
+          {presetNames.map((option) => (
+            <Button
+              key={option}
+              size="sm"
+              aria-pressed={preset === option}
+              onClick={() => setPreset(option)}
+            >
+              {presetLabel[option]}
+            </Button>
+          ))}
         </Stack>
         <Stack as="nav" direction="row" gap={2} wrap aria-label="Theme">
           {(Object.keys(viewLabel) as View[]).map((option) => (

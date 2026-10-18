@@ -1,4 +1,5 @@
 import { renderToStaticMarkup } from "react-dom/server";
+import { presetNames } from "@house/tokens";
 import { expect, test } from "vite-plus/test";
 import { App } from "../src/App.tsx";
 
@@ -17,6 +18,21 @@ test("light, dark, and high contrast render the same primitives with no componen
   expect(light?.length).toBeGreaterThan(1000);
   expect(dark).toBe(light);
   expect(hc).toBe(light);
+});
+
+test.each(presetNames)("the %s preset renders the same gallery markup as house", (preset) => {
+  const gallery = (html: string) =>
+    html.slice(html.indexOf('<div class="catalog-columns">')).replace(/_R_[a-z0-9]+_/gi, "id");
+  expect(gallery(renderToStaticMarkup(<App initialPreset={preset} />))).toBe(
+    gallery(renderToStaticMarkup(<App />)),
+  );
+});
+
+test("the preset switcher offers every preset and marks the active one", () => {
+  const html = renderToStaticMarkup(<App initialPreset="access" />);
+  const nav = html.slice(html.indexOf('aria-label="Preset"'), html.indexOf('aria-label="Theme"'));
+  expect(nav.match(/<button/g)).toHaveLength(presetNames.length);
+  expect(nav).toMatch(/aria-pressed="true"[^>]*>Access</);
 });
 
 test("every theme column shows all six primitives", () => {
