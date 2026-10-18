@@ -69,6 +69,14 @@ test("a single appearance shows the gallery once", () => {
 });
 
 // covers: AC-10
+test("the catalog does not show a Faces sample", () => {
+  const markup = renderToStaticMarkup(<App />);
+  expect(markup).not.toContain('aria-label="Faces"');
+  expect(markup).not.toContain("Source Sans 3");
+  expect(markup).not.toContain("IBM Plex Sans");
+});
+
+// covers: AC-10
 test("icon buttons have names and a field error is written out", () => {
   const markup = renderToStaticMarkup(<App />);
   for (const name of ["Previous page", "Next page", "Close"]) {
