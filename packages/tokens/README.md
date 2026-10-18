@@ -1,23 +1,8 @@
-# vite-plus-starter
+# @house/tokens
 
-A starter for creating a Vite Plus project.
+Semantic design tokens. One TypeScript source emits `theme.css` and a plain token object.
 
-## Development
-
-- Install dependencies:
-
-```bash
-vp install
-```
-
-- Run the unit tests:
-
-```bash
-vp test
-```
-
-- Build the library:
-
-```bash
-vp pack
+```ts
+import "@house/tokens/theme.css";
+import { themes, cssVar } from "@house/tokens";
 ```

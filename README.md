@@ -1,29 +1,43 @@
-# Vite+ Monorepo Starter
+# House design system
 
-A starter for creating a Vite+ monorepo.
+One visual language for my web projects: semantic tokens, a small set of React primitives, and a check that keeps a second palette out.
 
-## Development
+| Package            | What it ships                                                                      |
+| ------------------ | ---------------------------------------------------------------------------------- |
+| `@house/tokens`    | `theme.css` (light, dark, high contrast) and a plain token object for React Native |
+| `@house/react`     | `Button`, `IconButton`, `Text`, `Stack`, `Surface`, `Field` plus `styles.css`      |
+| `@house/migration` | Legacy style fixtures mapped onto the tokens, with before and after snippets       |
+| `apps/catalog`     | A Vite gallery that installs the packages the way a consuming app does             |
 
-- Check everything is ready:
+## Use it in an app
 
-```bash
-vp run ready
+```ts
+import "@house/tokens/theme.css";
+import "@house/react/styles.css";
+import { Button, Stack } from "@house/react";
 ```
 
-- Run the tests:
+Set `data-theme="dark"` or `data-theme="high-contrast"` on any wrapper to switch theme. An app may override `--accent` and `--font-sans` on a wrapper. It does not add its own palette.
 
-```bash
-vp run -r test
+React Native screens import values, not CSS:
+
+```ts
+import { themes } from "@house/tokens";
+const t = themes.light;
+StyleSheet.create({ screen: { backgroundColor: t.color.bg } });
 ```
 
-- Build the monorepo:
+## Develop
+
+This repo is built with [Vite+](https://viteplus.dev/) 1.3.0. Node 22.18 or newer.
 
 ```bash
-vp run -r build
+npm install
+npx vp check            # format, lint
+npx vp run -r test      # unit, contrast, and mapping tests
+npx vp run -r build     # pack the libraries, build the catalog
+npm run check:colors    # fail on a raw color outside the token source
+npm run check:budget    # fail when gzip size passes perf/budgets.json
 ```
 
-- Run the development server:
-
-```bash
-vp run dev
-```
+Decisions live in [`docs/specs/`](docs/specs/) and [`docs/architecture.md`](docs/architecture.md).
