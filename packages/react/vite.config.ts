@@ -1,6 +1,11 @@
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
+  run: {
+    tasks: {
+      build: { command: "vp pack", dependsOn: ["@house/tokens#build"] },
+    },
+  },
   pack: {
     entry: ["src/index.ts"],
     dts: true,

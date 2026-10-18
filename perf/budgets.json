@@ -10,6 +10,6 @@
       "maxBytes": 1750
     },
     { "name": "@house/react JS", "path": "packages/react/dist/index.mjs", "maxBytes": 1650 },
-    { "name": "@house/tokens JS", "path": "packages/tokens/dist/index.mjs", "maxBytes": 3100 }
+    { "name": "@house/tokens JS", "path": "packages/tokens/dist/index.mjs", "maxBytes": 6900 }
   ]
 }

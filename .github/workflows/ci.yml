@@ -19,9 +19,12 @@ jobs:
         run: npx vp check
       - name: Raw color scan
         run: npm run check:colors
-      - name: Tests (unit, contrast, mapping, catalog)
-        run: npx vp run -r test
+      # Packages resolve to dist/, so build before the tests read them.
       - name: Pack libraries and build the catalog
         run: npx vp run -r build
+      - name: Generated CSS is committed
+        run: git diff --exit-code -- packages/tokens/src
+      - name: Tests (unit, contrast, mapping, catalog)
+        run: npx vp run -r test
       - name: Gzip budget
         run: npm run check:budget
