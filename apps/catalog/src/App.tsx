@@ -26,6 +26,7 @@ const themeLabel: Record<ThemeName, string> = {
 
 const presetLabel: Record<PresetName, string> = {
   stay: "Stay",
+  glass: "Glass",
   editorial: "Editorial",
   cinema: "Cinema",
   access: "Access",

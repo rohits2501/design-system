@@ -6,8 +6,8 @@ The catalog is a private Vite gallery. It installs `@house/tokens` and `@house/r
 
 ## Key files
 
-| File | Owns |
-|---|---|
+| File          | Owns                            |
+| ------------- | ------------------------------- |
 | `src/App.tsx` | Preset switcher and the gallery |
 
 ## Commands

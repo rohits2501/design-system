@@ -38,10 +38,9 @@ test.each(presetNames)("the %s preset renders the same gallery markup as the def
 });
 
 // covers: AC-5, AC-10
-test("the preset switcher names the four looks and presses stay by default", () => {
+test("the preset switcher names the five looks and presses stay by default", () => {
   const nav = presetNav(renderToStaticMarkup(<App />));
-  expect(buttonLabels(nav)).toEqual(["Stay", "Editorial", "Cinema", "Access"]);
-  expect(nav).not.toContain("Glass");
+  expect(buttonLabels(nav)).toEqual(["Stay", "Glass", "Editorial", "Cinema", "Access"]);
   expect(nav).toMatch(/aria-pressed="true"[^>]*>Stay</);
 });
 
