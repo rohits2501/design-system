@@ -108,11 +108,11 @@ New variables on every block: `--font-display`, `--tracking-display`, `--surface
 ## Build plan
 
 1. Preset model in `themes.ts` and `preset-colors.ts` (done, commit `a8b3dbc`), satisfies **AC-9**.
-2. Emit house defaults into `theme.css` and the ordered `presets.css`; export `./presets.css` from the package, satisfies **AC-1**, **AC-2**, **AC-3**, **AC-4**, **AC-5**, **AC-7**.
-3. Tests: generalized contrast matrix, selector assertions, token object checks, satisfies **AC-1** to **AC-7**, **AC-9**.
-4. Component rules in `styles.css`, satisfies **AC-7**, **AC-8**.
-5. Catalog: preset switcher, `presets.css`, four Fontsource packages, catalog test, browser check of every preset and appearance, satisfies **AC-8**, **AC-10**.
-6. Budgets, architecture doc, README, version 0.2.0, satisfies **AC-11**, **AC-12**.
+2. Emit house defaults into `theme.css` and the ordered `presets.css`; export `./presets.css` from the package (done, `d88ceb7`), satisfies **AC-1**, **AC-2**, **AC-3**, **AC-4**, **AC-5**, **AC-7**.
+3. Tests: generalized contrast matrix, selector assertions, token object checks (done, `721a8a4`), satisfies **AC-1** to **AC-7**, **AC-9**.
+4. Component rules in `styles.css` (done, `73dd75b`), satisfies **AC-7**, **AC-8**.
+5. Catalog: preset switcher, `presets.css`, four Fontsource packages, catalog test, browser check of every preset and appearance (done, `30a7bf7`), satisfies **AC-8**, **AC-10**.
+6. Budgets, architecture doc, README, version 0.2.0 (done), satisfies **AC-11**, **AC-12**.
 
 ## Consequences
 

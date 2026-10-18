@@ -1,6 +1,6 @@
 {
   "name": "@house/tokens",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "private": true,
   "description": "Semantic design tokens: theme.css for the web and a plain token object for React Native.",
   "license": "MIT",

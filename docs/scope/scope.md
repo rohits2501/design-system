@@ -126,12 +126,12 @@ A second axis beside light, dark, and high contrast: five original looks (glass,
 **Done when:** every preset passes the contrast bars in every appearance (access at 7:1 everywhere), apps that import only `theme.css` see no change, and the catalog shows every preset without a component change.
 
 - [x] Design it (spec): `/architect theme presets`
-- [ ] Build it: `/develop theme presets`
+- [x] Build it: `/develop theme presets`
   - [x] Preset model in the token source (AC-9)
-  - [ ] House defaults in `theme.css`, opt in `presets.css`, and their tests (AC-1 to AC-7)
-  - [ ] Components read the new variables (AC-7, AC-8)
-  - [ ] Catalog preset switcher and fonts (AC-8, AC-10)
-  - [ ] Budgets, docs, and version 0.2.0 (AC-11, AC-12)
+  - [x] House defaults in `theme.css`, opt in `presets.css`, and their tests (AC-1 to AC-7)
+  - [x] Components read the new variables (AC-7, AC-8)
+  - [x] Catalog preset switcher and fonts (AC-8, AC-10)
+  - [x] Budgets, docs, and version 0.2.0 (AC-11, AC-12)
 - [ ] Verify it: `/check verify theme presets`
 - [ ] Test it: `/test theme presets`
 

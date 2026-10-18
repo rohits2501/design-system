@@ -21,7 +21,7 @@
 | `focusRing`                                             | `--focus-ring`                     | Focus outline, at least 3:1               |
 | `success`, `warning`, `danger`, `info` (plus `…Subtle`) | `--success`, `--success-subtle`, … | Status text and tinted backgrounds        |
 
-Scale: `--space-0` to `--space-12` on a 4px grid, `--radius-sm` (4), `--radius-md` (8), `--radius-pill`, `--font-size-*` with matching `--line-height-*`, `--font-weight-*`, `--font-sans`, `--font-mono`, `--focus-ring-width`, `--focus-ring-offset`.
+Scale: `--space-0` to `--space-12` on a 4px grid, `--radius-sm` (4), `--radius-md` (8), `--radius-pill`, `--font-size-*` with matching `--line-height-*`, `--font-weight-*`, `--font-sans`, `--font-display`, `--font-mono`, `--tracking-display`, `--control-height-sm` (28), `--control-height-md` (36), `--focus-ring-width`, `--focus-ring-offset`, `--surface-alpha` (1), `--surface-backdrop` (`none`).
 
 `borderStrong` and `focusRing` are additions to the planned role list: a divider and a control outline have different contrast rules (WCAG 1.4.11), so one `border` role could not serve both.
 
@@ -30,6 +30,18 @@ Scale: `--space-0` to `--space-12` on a 4px grid, `--radius-sm` (4), `--radius-m
 Light is the default on `:root`. `data-theme="dark"` and `data-theme="high-contrast"` override the color roles on any wrapper. With no attribute set, `prefers-color-scheme: dark` and `prefers-contrast: more` pick the matching theme. High contrast is a light theme with black text and outlines.
 
 Contrast is a test, not a review: every text role clears 4.5:1 on every background role in light and dark, and 7:1 in high contrast. Control outlines and the focus ring clear 3:1.
+
+## Presets
+
+A preset is a second axis beside the theme: `data-preset` picks a look (`glass`, `editorial`, `stay`, `cinema`, `access`), `data-theme` still picks light, dark, or high contrast inside it. House is the default and needs no attribute. Presets live in `presetMetrics` and `preset-colors.ts`, and emit to a separate opt in `presets.css`, so an app that imports only `theme.css` gets no preset bytes and no change.
+
+- Set `data-preset` on `html`. Descendants may carry `data-theme` (the catalog columns do) and follow the page preset. A subtree with `data-preset="house"` renders house; any other nested preset is not supported.
+- A preset sets colors, radius, type scale, sans and display stacks, display tracking, control heights, focus ring width, and surface material. Components read these through `--font-display`, `--tracking-display`, `--control-height-sm`, `--control-height-md`, `--surface-alpha`, and `--surface-backdrop`; none of them branch on the preset.
+- `glass` and `stay` set `--radius-sm` to 999, so buttons and inputs become pills and icon buttons become circles. Style a multi line text area with `--radius-md`.
+- Only `glass` is frosted (72% surface, 24px blur) and only in light and dark. High contrast and `prefers-reduced-transparency: reduce` are always solid. Contrast is tested on the solid color.
+- Tokens name font families; they ship no font files. An app that wants the real face installs it (the catalog uses Fontsource: Fraunces, Plus Jakarta Sans, Inter Tight, Atkinson Hyperlegible Next, all OFL). Without it the stack falls back to the system.
+- `access` holds every text pair at 7:1 in all three appearances, steps type up one size (body 18px), and raises controls to 36 and 44px with a 3px focus ring. Underline links in the app when using it.
+- Presets are original values in the spirit of public patterns, not brand copies: no brand names, brand colors, licensed fonts, or third party theme code.
 
 ## Accent
 
@@ -42,5 +54,6 @@ One accent, an indigo. It is the only brand color in the default theme. An app t
 ## Guard rails
 
 - `scripts/check-raw-color.mjs` fails on a hex, `rgb()`, or `hsl()` value outside the token source. A consuming app runs it on new UI files, with a baseline for files that predate adoption.
-- `perf/budgets.json` caps the gzip size of the catalog JavaScript and `theme.css`.
+- `perf/budgets.json` caps the gzip size of the catalog JavaScript and CSS, `theme.css`, `presets.css`, and each package bundle.
+- CI builds the packages before testing (Vite+ does not read npm `"*"` workspace ranges as task edges, so build order is declared with `dependsOn`), and fails if regenerated CSS differs from what is committed.
 - `@house/migration` maps legacy colors, utility classes, and runtime style objects onto roles, with before and after snippets a later codemod can be scored against.

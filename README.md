@@ -2,12 +2,12 @@
 
 One visual language for my web projects: semantic tokens, a small set of React primitives, and a check that keeps a second palette out.
 
-| Package            | What it ships                                                                      |
-| ------------------ | ---------------------------------------------------------------------------------- |
-| `@house/tokens`    | `theme.css` (light, dark, high contrast) and a plain token object for React Native |
-| `@house/react`     | `Button`, `IconButton`, `Text`, `Stack`, `Surface`, `Field` plus `styles.css`      |
-| `@house/migration` | Legacy style fixtures mapped onto the tokens, with before and after snippets       |
-| `apps/catalog`     | A Vite gallery that installs the packages the way a consuming app does             |
+| Package            | What it ships                                                                                             |
+| ------------------ | --------------------------------------------------------------------------------------------------------- |
+| `@house/tokens`    | `theme.css` (light, dark, high contrast), opt in `presets.css`, and a plain token object for React Native |
+| `@house/react`     | `Button`, `IconButton`, `Text`, `Stack`, `Surface`, `Field` plus `styles.css`                             |
+| `@house/migration` | Legacy style fixtures mapped onto the tokens, with before and after snippets                              |
+| `apps/catalog`     | A Vite gallery that installs the packages the way a consuming app does                                    |
 
 ## Use it in an app
 
@@ -18,6 +18,16 @@ import { Button, Stack } from "@house/react";
 ```
 
 Set `data-theme="dark"` or `data-theme="high-contrast"` on any wrapper to switch theme. An app may override `--accent` and `--font-sans` on a wrapper. It does not add its own palette.
+
+For a different look, opt in to presets and pick one on `html`:
+
+```ts
+import "@house/tokens/theme.css";
+import "@house/tokens/presets.css";
+document.documentElement.dataset.preset = "editorial"; // glass, editorial, stay, cinema, access
+```
+
+`data-theme` still works inside a preset. Presets name their fonts but ship none; install the face you want (for example from Fontsource) or the system font is used. See [Presets](docs/architecture.md#presets) for what each one changes.
 
 React Native screens import values, not CSS:
 
@@ -33,10 +43,11 @@ This repo is built with [Vite+](https://viteplus.dev/) 1.3.0. Node 22.18 or newe
 
 ```bash
 npm install
+npm run ready           # everything CI runs, in CI's order
 npx vp check            # format, lint
-npx vp run -r test      # unit, contrast, and mapping tests
-npx vp run -r build     # pack the libraries, build the catalog
 npm run check:colors    # fail on a raw color outside the token source
+npx vp run -r build     # pack the libraries in order, build the catalog
+npx vp run -r test      # unit, contrast, preset, and mapping tests (after a build)
 npm run check:budget    # fail when gzip size passes perf/budgets.json
 ```
 
