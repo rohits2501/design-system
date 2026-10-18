@@ -4,9 +4,13 @@
   "private": true,
   "description": "Semantic design tokens: theme.css for the web and a plain token object for React Native.",
   "license": "MIT",
+  "bin": {
+    "house-check-raw-color": "./bin/check-raw-color.mjs"
+  },
   "files": [
     "dist",
-    "src/theme.css"
+    "src/theme.css",
+    "bin"
   ],
   "type": "module",
   "exports": {
