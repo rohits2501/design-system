@@ -120,14 +120,22 @@ code in `packages/migration/`
 
 ## Slice 5: Theme presets
 
-### 12. Theme presets · in-progress · needs a decision
+### 12. Theme presets · in-progress
 
 A second axis beside light, dark, and high contrast: five original looks (glass, editorial, stay, cinema, access) on the same roles and the same components. Apps opt in; house stays the default and existing apps do not change.
 **Done when:** every preset passes the contrast bars in every appearance (access at 7:1 everywhere), apps that import only `theme.css` see no change, and the catalog shows every preset without a component change.
 
-- [ ] Design it (spec): `/architect theme presets`
+- [x] Design it (spec): `/architect theme presets`
+- [ ] Build it: `/develop theme presets`
+  - [x] Preset model in the token source (AC-9)
+  - [ ] House defaults in `theme.css`, opt in `presets.css`, and their tests (AC-1 to AC-7)
+  - [ ] Components read the new variables (AC-7, AC-8)
+  - [ ] Catalog preset switcher and fonts (AC-8, AC-10)
+  - [ ] Budgets, docs, and version 0.2.0 (AC-11, AC-12)
+- [ ] Verify it: `/check verify theme presets`
+- [ ] Test it: `/test theme presets`
 
-code in `packages/tokens/src/themes.ts`, `packages/tokens/src/preset-colors.ts` (preset model built ahead of the spec)
+spec [0002](../specs/0002-theme-presets/index.md) · code in `packages/tokens/src/`, `packages/react/src/styles.css`, `apps/catalog/`
 
 ## Adoptions
 
