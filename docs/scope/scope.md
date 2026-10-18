@@ -13,12 +13,15 @@ _These are recommendations to keep your build orderly, not requirements. Skip an
 | --- | ---------------------------- | ---------- | ----------- |
 | 1   | Stack and architecture       | Foundation | in-progress |
 | 2   | Coding standards and tooling | Foundation | planned     |
-| 3   | Token model                  | Foundation | planned     |
-| 4   | Shared primitives            | Foundation | planned     |
-| 5   | Catalog thread               | Slice 1    | planned     |
-| 6   | Color constraint             | Slice 2    | planned     |
-| 7   | Contrast and size budget     | Slice 3    | planned     |
-| 8   | Legacy style fixtures        | Slice 4    | planned     |
+| 3   | Token model                  | Foundation | in-progress |
+| 4   | Shared primitives            | Foundation | in-progress |
+| 5   | Catalog thread               | Slice 1    | in-progress |
+| 6   | Color constraint             | Slice 2    | in-progress |
+| 7   | Contrast and size budget     | Slice 3    | in-progress |
+| 8   | Legacy style fixtures        | Slice 4    | in-progress |
+| 9   | Document console adoption    | Adoption   | in-progress |
+| 10  | AudioForge adoption          | Adoption   | in-progress |
+| 11  | Bol dictation screen         | Adoption   | in-progress |
 
 ## Foundations
 
@@ -30,7 +33,7 @@ Choose how the library is built and how a later app installs it, then scaffold a
 - [x] Decide the stack (spec): `/architect stack and architecture`
 - [x] Scaffold from the decision: `/develop stack and architecture`
 - [x] Verify it: `/check verify stack and architecture`
-- [ ] Test it: `/test stack and architecture`
+- [x] Test it: `/test stack and architecture`
 
 Spec [0001](../specs/0001-stack-and-architecture/index.md)
 code in `./`
@@ -43,63 +46,118 @@ Capture conventions from the real scaffold, then install lint, format, and type 
 - [ ] Capture conventions and tooling choices: `/audit`
 - [ ] Install the tooling: `/develop tooling`
 
-### 3. Token model · planned · needs a decision
+### 3. Token model · in-progress
 
 The shared roles for color, space, type, and radius, including light, dark, and high contrast, plus a plain value object a native screen can import.
 **Done when:** one source emits themed web variables and a plain token object, and a later screen can override accent and font without a second palette.
 
-- [ ] Design it (spec): `/architect token model`
+- [x] Design it (spec): `/architect token model`
+- [x] Build it: `/develop token model`
+- [x] Test it: theme drift and contrast tests
 
-### 4. Shared primitives · planned · needs a decision
+Decided in spec [0001](../specs/0001-stack-and-architecture/index.md) · code in `packages/tokens/`
+
+### 4. Shared primitives · in-progress
 
 The small set of controls every later screen is built from. Focus is visible, and status is never color alone.
 **Done when:** button, icon button, text, stack, surface, and field render from tokens only, with a visible focus ring and a disabled state.
 
-- [ ] Design it (spec): `/architect shared primitives`
+- [x] Design it (spec): `/architect shared primitives`
+- [x] Build it: `/develop shared primitives`
+- [x] Test it: render tests for every primitive
+
+Decided in spec [0001](../specs/0001-stack-and-architecture/index.md) · code in `packages/react/`
 
 ## Slice 1: Catalog thread
 
-### 5. Catalog thread · planned
+### 5. Catalog thread · in-progress
 
 The walking skeleton. One real button, on a catalog page, in light, dark, and high contrast, installed the way a later app will install it.
 **Done when:** the catalog builds, the button follows the active theme, and switching theme does not require a component change.
 
-- [ ] Build it: `/develop catalog thread`
+- [x] Build it: `/develop catalog thread`
+- [x] Verify it: light, dark, and high contrast checked in the browser
+- [x] Test it: the three themes render identical markup
+
+code in `apps/catalog/`
 
 ## Slice 2: Color constraint
 
-### 6. Color constraint · planned
+### 6. Color constraint · in-progress
 
 A check that fails when a raw color appears outside the token source, with one sample file that is supposed to fail.
 **Done when:** a fixture with a raw hex fails the check, and token source files pass.
 
-- [ ] Build it: `/develop color constraint`
+- [x] Build it: `/develop color constraint`
+- [x] Test it: fixtures fail, token source passes, and the CLI scans when run through an npm bin link
+
+code in `packages/tokens/bin/check-raw-color.mjs`
 
 ## Slice 3: Contrast and size budget
 
-### 7. Contrast and size budget · planned
+### 7. Contrast and size budget · in-progress
 
 Prove the themes meet a contrast bar, and that the catalog script and the theme file stay under a recorded size ceiling.
 **Done when:** every text on surface pair in light, dark, and high contrast meets WCAG AA, and the catalog script plus theme file sit under checked in ceilings.
 
-- [ ] Build it: `/develop contrast and size budget`
+- [x] Build it: `/develop contrast and size budget`
+- [x] Test it: contrast tests per theme; `npm run check:budget` against `perf/budgets.json`
+
+code in `packages/tokens/tests/`, `scripts/check-budget.mjs`
 
 ## Slice 4: Legacy style fixtures
 
-### 8. Legacy style fixtures · planned
+### 8. Legacy style fixtures · in-progress
 
 A small set of before and after samples (a raw hex, a utility palette class, a runtime style object) mapped onto tokens or marked retired.
 **Done when:** every fixture is mapped or explicitly retired, and a missing mapping fails the test.
 
-- [ ] Build it: `/develop legacy style fixtures`
+- [x] Build it: `/develop legacy style fixtures`
+- [x] Test it: every fixture mapped or retired
+
+code in `packages/migration/`
+
+## Adoptions
+
+Each app installs the packed tarballs from its own `vendor/` folder (`node scripts/vendor.mjs <app>`), so its CI does not need this repo.
+
+### 9. Document console adoption · in-progress
+
+Depend on the package, alias current variables, then replace shared controls. Stays on Next.
+**Done when:** every screen reads package variable names, `Button` comes from `@house/react`, light and dark still work, and the bundle budget passes.
+
+- [x] Alias the variables, then move screens to package names and re-export `Button`
+- [x] Add `check:colors` to CI, with `app/globals.css` (scrim, shadow, PDF paper) as the only baselined file
+- [x] Verify it: light and dark checked in the browser; tests, build, and budget pass
+
+code in `../ai-document-intelligence-console`
+
+### 10. AudioForge adoption · in-progress
+
+Same three steps, keeping the serif font as a `--font-sans` override. Stays on Next; Tailwind stays for layout.
+**Done when:** screens use package primitives and color names, no aliases remain, and the bundle budget passes.
+
+- [x] Alias the variables; pin `data-theme="dark"` since the app was dark only
+- [x] Restyle home, create form, review desk, demo player, and onboarding on `Button`, `Field`, `Surface`, and `Text`
+- [x] Add `check:colors` to CI with no baseline
+- [x] Verify it: screens checked in the browser; tests, build, and budget pass from a clean install
+
+code in `../audioforge`
+
+### 11. Bol dictation screen · in-progress
+
+Point the screen styles at the token object. Native keyboards stay native.
+**Done when:** `DictationScreen` has no raw colors and the web preview renders.
+
+- [x] Map every hex in `DictationScreen` and the root layout to `themes.light.color`
+- [x] Verify it: typecheck, server tests, and the web export render
+
+code in `../bol/src/dictation/`
 
 ## Deferred
 
-Out of scope until the package proofs pass. Kept so the plan stays honest.
+Kept so the plan stays honest.
 
-- **Document console adoption**: depend on the package, alias current variables, then replace shared controls. Stays on its current app framework. · needs a decision
-- **AudioForge adoption**: same three steps, keeping the serif font as an override. · needs a decision
-- **Bol dictation screen**: point the screen styles at the token object. Native keyboards stay native. · needs a decision
 - **Dense data grid**: a later control on the same tokens.
 - **Package registry publish**: git or local install is enough until a registry is worth it.
 
