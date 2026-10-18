@@ -3,6 +3,7 @@ import { describe, expect, test } from "vite-plus/test";
 import {
   colorVarName,
   colors,
+  fontFamily,
   presetColorRoles,
   presetNames,
   presets,
@@ -167,10 +168,41 @@ test.each([
 });
 
 // covers: AC-2
-test("editorial replaces the stay font", () => {
+test("editorial body is Newsreader and the titles stay Fraunces", () => {
   const body = rule(presetsCss, 'html[data-preset="editorial"],');
+  expect(body).toContain("Newsreader Variable");
   expect(body).toContain("Fraunces Variable");
   expect(body).not.toContain("Plus Jakarta Sans");
+});
+
+// covers: AC-13
+test("every look names JetBrains Mono, and the extra stacks are not presets", () => {
+  expect(themeCss).toContain(
+    '--font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;',
+  );
+  expect(fontFamily.reading).toBe(
+    '"Source Sans 3 Variable", "Source Sans 3", ui-sans-serif, system-ui, sans-serif',
+  );
+  expect(fontFamily.dense).toBe(
+    '"IBM Plex Sans Variable", "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif',
+  );
+  for (const name of presetNames) {
+    expect(presets[name].light.fontFamily.mono).toBe(fontFamily.mono);
+    expect(presets[name].light.fontFamily.sans).not.toBe(fontFamily.reading);
+  }
+});
+
+// covers: AC-13
+test("reading and dense stay names only, and every appearance shares the code face", () => {
+  expect(themeCss).not.toContain("Source Sans 3");
+  expect(themeCss).not.toContain("IBM Plex Sans");
+  expect(presetsCss).not.toContain("Source Sans 3");
+  expect(presetsCss).not.toContain("IBM Plex Sans");
+  for (const name of presetNames) {
+    for (const appearance of themeNames) {
+      expect(presets[name][appearance].fontFamily.mono).toBe(fontFamily.mono);
+    }
+  }
 });
 
 // covers: AC-3
