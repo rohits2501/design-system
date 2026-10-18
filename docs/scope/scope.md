@@ -122,7 +122,7 @@ code in `packages/migration/`
 
 ### 12. Theme presets · done
 
-A second axis beside light, dark, and high contrast. Stay is the default look in `theme.css`. Editorial, cinema, and access are opt in through `presets.css`.
+A second axis beside light, dark, and high contrast. Stay is the default look in `theme.css`. Glass, editorial, cinema, and access are opt in through `presets.css`. Glass frosts regular buttons and surfaces.
 **Done when:** every preset passes the contrast bars in every appearance (access at 7:1 everywhere), a page with no `data-preset` renders stay, and the catalog shows every preset without a component change.
 
 - [x] Design it (spec): `/architect theme presets`

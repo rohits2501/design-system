@@ -6,10 +6,10 @@
 
 ## Key files
 
-| File | Owns |
-|---|---|
-| `src/map.ts` | The mapping |
-| `fixtures/` | Before and after snippets |
+| File         | Owns                      |
+| ------------ | ------------------------- |
+| `src/map.ts` | The mapping               |
+| `fixtures/`  | Before and after snippets |
 
 ## Commands
 

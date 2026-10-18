@@ -33,12 +33,12 @@ Contrast is a test, not a review: every text role clears 4.5:1 on every backgrou
 
 ## Presets
 
-A preset is a second axis beside the theme: `data-preset` picks a look, and `data-theme` still picks light, dark, or high contrast inside it. Stay is the default and needs no attribute: `theme.css` and `themes` are stay. Editorial, cinema, and access live in the opt in `presets.css`. There is no glass preset.
+A preset is a second axis beside the theme: `data-preset` picks a look, and `data-theme` still picks light, dark, or high contrast inside it. Stay is the default and needs no attribute: `theme.css` and `themes` are stay. Glass, editorial, cinema, and access live in the opt in `presets.css`.
 
 - Set `data-preset` on `html` to leave stay. Descendants may carry `data-theme` (the catalog columns do) and follow the page preset. A nested preset inside another preset is not supported.
 - A preset sets colors, radius, type scale, sans and display stacks, display tracking, control heights, focus ring width, and surface material. Components read these through `--font-display`, `--tracking-display`, `--control-height-sm`, `--control-height-md`, `--surface-alpha`, and `--surface-backdrop`; none of them branch on the preset.
-- `stay` sets `--radius-sm` to 999, so buttons and inputs become pills and icon buttons become circles. Style a multi line text area with `--radius-md`.
-- Every preset is solid. High contrast and `prefers-reduced-transparency: reduce` stay solid. Contrast is tested on the solid color.
+- `stay` and `glass` set `--radius-sm` to 999, so buttons and inputs become pills and icon buttons become circles. Style a multi line text area with `--radius-md`.
+- Stay, editorial, cinema, and access are solid. Glass light and dark frost regular buttons and surfaces (`blur(20px) saturate(1.8)`, alpha 0.62). A primary button stays a solid accent fill. High contrast and `prefers-reduced-transparency: reduce` stay solid. Contrast is tested on the solid color.
 - Tokens name font families; they ship no font files. An app that wants the real face installs it (the catalog uses Fontsource: Fraunces, Plus Jakarta Sans, Inter Tight, Atkinson Hyperlegible Next, all OFL). Without it the stack falls back to the system.
 - `access` holds every text pair at 7:1 in all three appearances, steps type up one size (body 18px), and raises controls to 36 and 44px with a 3px focus ring. Underline links in the app when using it.
 - Presets are original values in the spirit of public patterns, not brand copies: no brand names, brand colors, licensed fonts, or third party theme code.

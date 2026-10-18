@@ -24,8 +24,10 @@ For another look, opt in and set `data-preset` on `html`:
 ```ts
 import "@house/tokens/theme.css";
 import "@house/tokens/presets.css";
-document.documentElement.dataset.preset = "editorial"; // editorial, cinema, access
+document.documentElement.dataset.preset = "editorial"; // glass, editorial, cinema, access
 ```
+
+`glass` frosts regular buttons and surfaces. A primary button stays a solid accent fill. High contrast and reduced transparency stay solid.
 
 `data-theme` still works inside a preset. Presets name their fonts but ship none; install the face you want (for example from Fontsource) or the system font is used. See [Presets](docs/architecture.md#presets) for what each one changes.
 
