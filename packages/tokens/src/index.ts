@@ -21,5 +21,5 @@ export {
   type Theme,
   type ThemeName,
 } from "./themes.ts";
-export { colorVarName, cssVar, renderThemeCss } from "./css.ts";
+export { colorVarName, cssVar, renderPresetsCss, renderThemeCss } from "./css.ts";
 export { contrastRatio } from "./contrast.ts";

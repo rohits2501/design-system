@@ -1,13 +1,15 @@
 import {
   colors,
-  focusRing,
-  fontFamily,
-  fontSize,
   fontWeight,
-  radius,
+  presetColorRoles,
+  presetMetrics,
+  presetNames,
   space,
   themeAttribute,
+  themeNames,
   type ColorRoles,
+  type PresetMetrics,
+  type PresetName,
   type ThemeName,
 } from "./themes.ts";
 
@@ -22,6 +24,8 @@ export const colorVarName = Object.fromEntries(
   (Object.keys(colors.light) as ColorRole[]).map((role) => [role, `--${kebab(role)}`]),
 ) as Record<ColorRole, string>;
 
+const house = presetMetrics.house;
+
 /** `var(...)` references, for inline styles that must stay on tokens. */
 export const cssVar = {
   color: Object.fromEntries(
@@ -31,53 +35,205 @@ export const cssVar = {
     Object.keys(space).map((step) => [step, `var(--space-${step})`]),
   ) as Record<keyof typeof space, string>,
   radius: Object.fromEntries(
-    Object.keys(radius).map((key) => [key, `var(--radius-${key})`]),
-  ) as Record<keyof typeof radius, string>,
+    Object.keys(house.radius).map((key) => [key, `var(--radius-${key})`]),
+  ) as Record<keyof PresetMetrics["radius"], string>,
   fontSans: "var(--font-sans)",
+  fontDisplay: "var(--font-display)",
   fontMono: "var(--font-mono)",
 };
 
-function colorDeclarations(name: ThemeName): string[] {
-  const roles = colors[name];
-  return (Object.keys(roles) as ColorRole[]).map(
-    (role) => `  ${colorVarName[role]}: ${roles[role]};`,
+type Declarations = Map<string, string>;
+
+function colorDeclarations(preset: PresetName, name: ThemeName): Declarations {
+  const roles = presetColorRoles[preset][name];
+  return new Map(
+    (Object.keys(roles) as ColorRole[]).map((role) => [colorVarName[role], roles[role]]),
   );
 }
 
-function scaleDeclarations(): string[] {
-  const lines: string[] = [];
-  for (const [step, px] of Object.entries(space)) lines.push(`  --space-${step}: ${px}px;`);
-  for (const [key, px] of Object.entries(radius)) lines.push(`  --radius-${key}: ${px}px;`);
-  for (const [key, value] of Object.entries(fontSize)) {
-    lines.push(`  --font-size-${key}: ${value.size / 16}rem;`);
-    lines.push(`  --line-height-${key}: ${value.lineHeight / 16}rem;`);
+function materialDeclarations(material: PresetMetrics["material"]): Declarations {
+  return new Map([
+    ["--surface-alpha", String(material.alpha)],
+    ["--surface-backdrop", material.blur > 0 ? `blur(${material.blur}px)` : "none"],
+  ]);
+}
+
+const solid = { blur: 0, alpha: 1 };
+const isSolid = (m: PresetMetrics["material"]) => m.blur === 0 && m.alpha === 1;
+
+/** Everything a preset sets besides color and material. */
+function metricDeclarations(m: PresetMetrics): Declarations {
+  const d: Declarations = new Map();
+  for (const [key, px] of Object.entries(m.radius)) d.set(`--radius-${key}`, `${px}px`);
+  for (const [key, value] of Object.entries(m.fontSize)) {
+    d.set(`--font-size-${key}`, `${value.size / 16}rem`);
+    d.set(`--line-height-${key}`, `${value.lineHeight / 16}rem`);
   }
+  d.set("--font-sans", m.fontFamily.sans);
+  d.set("--font-display", m.fontFamily.display);
+  d.set("--font-mono", m.fontFamily.mono);
+  d.set("--tracking-display", `${m.trackingDisplay}em`);
+  d.set("--control-height-sm", `${m.controlHeight.sm}px`);
+  d.set("--control-height-md", `${m.controlHeight.md}px`);
+  d.set("--focus-ring-width", `${m.focusRing.width}px`);
+  d.set("--focus-ring-offset", `${m.focusRing.offset}px`);
+  return d;
+}
+
+/** Only the declarations in `next` whose value differs from `base`. */
+function diff(next: Declarations, base: Declarations): Declarations {
+  return new Map([...next].filter(([key, value]) => base.get(key) !== value));
+}
+
+function merge(...parts: Declarations[]): Declarations {
+  return new Map(parts.flatMap((part) => [...part]));
+}
+
+function scheme(name: ThemeName): "light" | "dark" {
+  return name === "dark" ? "dark" : "light";
+}
+
+function block(
+  selectors: string[],
+  name: ThemeName | null,
+  decls: Declarations,
+  indent = "",
+): string {
+  const lines = [
+    ...(name ? [`color-scheme: ${scheme(name)};`] : []),
+    ...[...decls].map(([key, value]) => `${key}: ${value};`),
+  ].map((line) => `${indent}  ${line}`);
+  return `${indent}${selectors.join(`,\n${indent}`)} {\n${lines.join("\n")}\n${indent}}`;
+}
+
+function media(query: string, inner: string): string {
+  return `@media ${query} {\n${inner}\n}`;
+}
+
+const attr = (name: ThemeName) => `[data-theme="${themeAttribute[name]}"]`;
+const presetAttr = (preset: PresetName) => `[data-preset="${preset}"]`;
+
+function houseRoot(): Declarations {
+  const shared: Declarations = new Map();
+  for (const [step, px] of Object.entries(space)) shared.set(`--space-${step}`, `${px}px`);
   for (const [key, weight] of Object.entries(fontWeight))
-    lines.push(`  --font-weight-${key}: ${weight};`);
-  lines.push(`  --font-sans: ${fontFamily.sans};`);
-  lines.push(`  --font-mono: ${fontFamily.mono};`);
-  lines.push(`  --focus-ring-width: ${focusRing.width}px;`);
-  lines.push(`  --focus-ring-offset: ${focusRing.offset}px;`);
-  return lines;
+    shared.set(`--font-weight-${key}`, String(weight));
+  return merge(shared, metricDeclarations(house), materialDeclarations(house.material));
 }
 
-function block(selector: string, scheme: "light" | "dark", lines: string[], indent = ""): string {
-  const body = [`  color-scheme: ${scheme};`, ...lines].map((line) => indent + line).join("\n");
-  return `${indent}${selector} {\n${body}\n${indent}}`;
-}
-
-/** The full `theme.css`. Light is the default; dark and high contrast are attribute overrides. */
+/** The full `theme.css`: house only. Light is the default; dark and high contrast are attribute overrides. */
 export function renderThemeCss(): string {
-  const dark = themeAttribute.dark;
-  const hc = themeAttribute.highContrast;
   const parts = [
     "/* Generated by @house/tokens from src/themes.ts. Do not edit by hand. */",
-    block(":root", "light", [...scaleDeclarations(), ...colorDeclarations("light")]),
-    block(`[data-theme="${themeAttribute.light}"]`, "light", colorDeclarations("light")),
-    block(`[data-theme="${dark}"]`, "dark", colorDeclarations("dark")),
-    block(`[data-theme="${hc}"]`, "light", colorDeclarations("highContrast")),
-    `@media (prefers-color-scheme: dark) {\n${block(":root:not([data-theme])", "dark", colorDeclarations("dark"), "  ")}\n}`,
-    `@media (prefers-contrast: more) {\n${block(":root:not([data-theme])", "light", colorDeclarations("highContrast"), "  ")}\n}`,
+    block([":root"], "light", merge(houseRoot(), colorDeclarations("house", "light"))),
+    ...themeNames.map((name) => block([attr(name)], name, colorDeclarations("house", name))),
+    media(
+      "(prefers-color-scheme: dark)",
+      block([":root:not([data-theme])"], "dark", colorDeclarations("house", "dark"), "  "),
+    ),
+    media(
+      "(prefers-contrast: more)",
+      block(
+        [":root:not([data-theme])"],
+        "highContrast",
+        colorDeclarations("house", "highContrast"),
+        "  ",
+      ),
+    ),
+  ];
+  return `${parts.join("\n\n")}\n`;
+}
+
+/** Colors for one appearance, plus material when the preset is not solid (high contrast is). */
+function appearance(preset: PresetName, name: ThemeName, withMaterial: boolean): Declarations {
+  const colorsFor = colorDeclarations(preset, name);
+  if (!withMaterial) return colorsFor;
+  return merge(
+    colorsFor,
+    materialDeclarations(name === "highContrast" ? solid : presetMetrics[preset].material),
+  );
+}
+
+function presetRules(preset: PresetName): string[] {
+  const p = presetAttr(preset);
+  const m = presetMetrics[preset];
+  const frosted = !isSolid(m.material);
+  const metrics = diff(metricDeclarations(m), metricDeclarations(house));
+  return [
+    block(
+      [`html${p}`, `${p} ${attr("light")}`],
+      "light",
+      merge(metrics, appearance(preset, "light", frosted)),
+    ),
+    ...(["dark", "highContrast"] as const).map((name) =>
+      block(
+        [`html${p}${attr(name)}`, `${p} ${attr(name)}`],
+        name,
+        appearance(preset, name, frosted),
+      ),
+    ),
+    media(
+      "(prefers-color-scheme: dark)",
+      block([`html${p}:not([data-theme])`], "dark", appearance(preset, "dark", frosted), "  "),
+    ),
+    media(
+      "(prefers-contrast: more)",
+      block(
+        [`html${p}:not([data-theme])`],
+        "highContrast",
+        appearance(preset, "highContrast", frosted),
+        "  ",
+      ),
+    ),
+  ];
+}
+
+/**
+ * An explicit `data-preset="house"` inside another preset. Emitted after every preset so equal
+ * specificity resolves to house; without its own `data-theme` it follows the nearest one above.
+ */
+function houseRules(): string[] {
+  const h = presetAttr("house");
+  const withSolid = (name: ThemeName) => appearance("house", name, true);
+  return [
+    block([h], "light", merge(metricDeclarations(house), withSolid("light"))),
+    media(
+      "(prefers-color-scheme: dark)",
+      block([`${h}:not([data-theme])`], "dark", withSolid("dark"), "  "),
+    ),
+    media(
+      "(prefers-contrast: more)",
+      block([`${h}:not([data-theme])`], "highContrast", withSolid("highContrast"), "  "),
+    ),
+    ...themeNames.map((name) =>
+      block(
+        [`${h}${attr(name)}`, `${h} ${attr(name)}`, `${attr(name)} ${h}:not([data-theme])`],
+        name,
+        withSolid(name),
+      ),
+    ),
+  ];
+}
+
+/** The opt in `presets.css`. Load after `theme.css`; select with `data-preset` on `html`. */
+export function renderPresetsCss(): string {
+  const parts = [
+    "/* Generated by @house/tokens from src/themes.ts. Do not edit by hand. */",
+    ...presetNames.filter((name) => name !== "house").flatMap(presetRules),
+    ...houseRules(),
+    // `!important` because the frosted blocks above are more specific than this reset needs to be.
+    media(
+      "(prefers-reduced-transparency: reduce)",
+      block(
+        [":root", "[data-preset]", "[data-preset] [data-theme]"],
+        null,
+        new Map([
+          ["--surface-alpha", "1 !important"],
+          ["--surface-backdrop", "none !important"],
+        ]),
+        "  ",
+      ),
+    ),
   ];
   return `${parts.join("\n\n")}\n`;
 }

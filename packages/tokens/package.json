@@ -10,6 +10,7 @@
   "files": [
     "dist",
     "src/theme.css",
+    "src/presets.css",
     "bin"
   ],
   "type": "module",
@@ -24,6 +25,7 @@
       "default": "./dist/index.mjs"
     },
     "./theme.css": "./src/theme.css",
+    "./presets.css": "./src/presets.css",
     "./check-raw-color": "./bin/check-raw-color.mjs"
   },
   "scripts": {

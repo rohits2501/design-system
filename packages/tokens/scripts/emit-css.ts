@@ -1,6 +1,11 @@
 import { writeFileSync } from "node:fs";
-import { renderThemeCss } from "../src/css.ts";
+import { renderPresetsCss, renderThemeCss } from "../src/css.ts";
 
-const target = new URL("../src/theme.css", import.meta.url);
-writeFileSync(target, renderThemeCss());
-console.log(`wrote ${target.pathname}`);
+for (const [file, render] of [
+  ["theme.css", renderThemeCss],
+  ["presets.css", renderPresetsCss],
+] as const) {
+  const target = new URL(`../src/${file}`, import.meta.url);
+  writeFileSync(target, render());
+  console.log(`wrote ${target.pathname}`);
+}
