@@ -54,6 +54,7 @@ The default accent is stay's rose. An app that needs a different voice overrides
 ## Guard rails
 
 - `scripts/check-raw-color.mjs` fails on a hex, `rgb()`, or `hsl()` value outside the token source. A consuming app runs it on new UI files, with a baseline for files that predate adoption.
-- `perf/budgets.json` caps the gzip size of the catalog JavaScript and CSS, `theme.css`, `presets.css`, and each package bundle.
+- `perf/budgets.json` caps the gzip size of the catalog JavaScript and CSS, `theme.css`, `presets.css`, and each package bundle. CI also writes `perf/snapshot.json` (parsed bytes and level-9 gzip) and posts a sticky pull-request comment, `<!-- perf-budget -->`, with the delta against the last successful `main` snapshot. A growth of at least 100 B or 1% is marked. The comment does not fail the build. The gzip ceiling still does. Raise `maxBytes` in the same change that grows an asset.
+- The catalog bench mounts the stay gallery and a dense set of controls in Chromium, twice on a pull request: this commit and the merge-base. Font files are not loaded, and paint is compared only inside that job. A row whose duration moved less than 10% and 5 ms, with the same render count, is left inside the noise band. A duration regression of 20% or more is an alarm in the comment, not a failed check.
 - CI builds the packages before testing (Vite+ does not read npm `"*"` workspace ranges as task edges, so build order is declared with `dependsOn`), and fails if regenerated CSS differs from what is committed.
 - `@house/migration` maps legacy colors, utility classes, and runtime style objects onto roles, with before and after snippets a later codemod can be scored against.

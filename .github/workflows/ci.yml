@@ -5,26 +5,100 @@ on:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: read
+  actions: read
+  pull-requests: write
+
 jobs:
   ready:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
+
       - run: npm ci
+
       - name: Format and lint
         run: npx vp check
+
       - name: Raw color scan
         run: npm run check:colors
+
       # Packages resolve to dist/, so build before the tests read them.
       - name: Pack libraries and build the catalog
         run: npx vp run -r build
+
       - name: Generated CSS is committed
         run: git diff --exit-code -- packages/tokens/src
+
       - name: Tests (unit, contrast, mapping, catalog)
         run: npx vp run -r test
+
+      - name: Perf comment
+        run: node --test scripts/perf-comment.test.mjs
+
       - name: Gzip budget
+        id: budget
         run: npm run check:budget
+
+      - name: Install Playwright browser
+        if: steps.budget.outcome == 'success'
+        env:
+          PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.playwright-browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Catalog benches
+        if: steps.budget.outcome == 'success'
+        env:
+          PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.playwright-browsers
+        run: node scripts/run-bench.mjs
+
+      - name: Benches at the merge-base
+        if: github.event_name == 'pull_request' && steps.budget.outcome == 'success'
+        env:
+          PLAYWRIGHT_BROWSERS_PATH: ${{ github.workspace }}/.playwright-browsers
+        run: node scripts/bench-base.mjs
+
+      - name: Upload perf snapshot
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.budget.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: perf-snapshot
+          path: perf/snapshot.json
+          retention-days: 30
+
+      - name: Comment on the pull request
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && (steps.budget.outcome == 'success' || steps.budget.outcome == 'failure')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ ! -f perf/snapshot.json ]; then
+            echo "No perf snapshot to comment on."
+            exit 0
+          fi
+          mkdir -p perf-base
+          id=$(gh run list --workflow ci.yml --branch main --status success --limit 1 --json databaseId --jq '.[0].databaseId // empty')
+          if [ -n "$id" ]; then
+            gh run download "$id" --name perf-snapshot --dir perf-base || true
+          fi
+          args=(--head perf/snapshot.json --run-url "$RUN_URL" --post)
+          if [ -f perf-base/snapshot.json ]; then
+            args+=(--base perf-base/snapshot.json)
+          fi
+          if [ -f perf-base/benches.json ]; then
+            args+=(--fresh-benches perf-base/benches.json)
+          elif [ "${{ steps.budget.outcome }}" = "success" ]; then
+            echo '{"benches":[]}' > perf-base/benches.json
+            args+=(--fresh-benches perf-base/benches.json)
+          fi
+          node scripts/perf-comment.mjs "${args[@]}"
