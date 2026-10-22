@@ -36,3 +36,8 @@ dist-ssr
 .cursor/
 .cursor/worktrees/
 .agents/
+
+# perf comment artifacts
+perf/snapshot.json
+perf-base/
+.playwright-browsers/
