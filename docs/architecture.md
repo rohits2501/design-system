@@ -51,6 +51,15 @@ The default accent is stay's rose. An app that needs a different voice overrides
 
 `@house/react` ships plain React components and one `styles.css`. Classes are prefixed `h-` and read only token variables. Components touch no browser API at module scope, so a server rendered app can render them, and they carry no `use client` directive or framework import.
 
+## Complex primitives (web)
+
+The simple set (`Button`, `IconButton`, `Field`, `Text`, `Stack`, `Surface`) is House's own markup. The interactive set with behavior and focus management, `Dialog`, `Popover`, `Menu`, `ContextMenu`, `Select`, `Combobox`, and `Tooltip`, is not hand rolled: a House component wraps a Base UI (`mui/base-ui`) headless primitive and dresses it in the `h-` classes and token variables. Base UI owns the behavior and accessibility; House owns the look.
+
+- Base UI, not shadcn or Radix: the foundation is the library we contribute to (focus, tab stops, and pointer handling in `select`, `context menu`, and `radio group`), so an interaction or accessibility bug is fixed upstream, never forked.
+- Base UI unstyled, not Material styled: `@mui/material` is a styled Material system; House's identity is its own tokens, so Material components are not consumed for their look. The value carried over from that work is the test practice below.
+- Web only. Base UI targets the DOM. React Native has no DOM, so `bol` builds the same roles on `@expo/ui` with the token object. The headless primitive never crosses into native.
+- Accessibility is a test, like contrast. Each complex primitive carries an axe plus WCAG conformance check, following the pattern used in the `mui/material-ui` test contributions, so a regression fails CI rather than a review.
+
 ## Guard rails
 
 - `scripts/check-raw-color.mjs` fails on a hex, `rgb()`, or `hsl()` value outside the token source. A consuming app runs it on new UI files, with a baseline for files that predate adoption.

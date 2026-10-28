@@ -66,6 +66,7 @@ The small set of controls every later screen is built from. Focus is visible, an
 - [x] Design it (spec): `/architect shared primitives`
 - [x] Build it: `/develop shared primitives`
 - [x] Test it: render tests for every primitive
+- [ ] Complex web primitives (Dialog, Popover, Menu, Select, Tooltip) wrap Base UI headless + House tokens; native stays on `@expo/ui`. No shadcn/Radix, no Material styling. See `docs/architecture.md` → "Complex primitives (web)".
 
 Decided in spec [0001](../specs/0001-stack-and-architecture/index.md) · code in `packages/react/`
 
